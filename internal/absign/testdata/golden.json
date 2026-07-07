@@ -1,0 +1,104 @@
+{
+  "fixed_time_ms": 1737000000123,
+  "rc4": [
+    {
+      "plaintext": "hello",
+      "key": "y",
+      "out": "2de1c82eeb"
+    },
+    {
+      "plaintext": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      "key": "\u0000\u0001\u000e",
+      "out": "958694fdafe410a7311ed92c6d40c49baf5d6760177a56e99cf6c0801417ce634fe5fffdcee702028a3c37d0aae027b5704baa183a557965d960d507"
+    },
+    {
+      "plaintext": "",
+      "key": "y",
+      "out": ""
+    },
+    {
+      "plaintext": "abc",
+      "key": "\u0000\u0001\u000e",
+      "out": "b98b8d"
+    }
+  ],
+  "sm3_hex": [
+    {
+      "data": "",
+      "out": "1ab21d8355cfa17f8e61194831e81a8f22bec8c728fefb747ed035eb5082aa2b"
+    },
+    {
+      "data": "abc",
+      "out": "66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0"
+    },
+    {
+      "data": "abcdefghijklmnopqrstuvwxyz",
+      "out": "b80fe97a4da24afc277564f66a359ef440462ad28dcc6d63adb24d5c20a61595"
+    },
+    {
+      "data": "aid=6383&app_name=douyin_web&web_rid=746299965912cus",
+      "out": "eba982b625ca7bd52a13eda478848f42d033736bcea09611dbb730f0e582508e"
+    },
+    {
+      "data": "cus",
+      "out": "417d9419cff0742bacd41b07de88334d86546560873f7912a6adcbe82b8161bf"
+    }
+  ],
+  "result_encrypt": [
+    {
+      "long_str_hex": "0001080e",
+      "num": "s3",
+      "out": "cc1KpE",
+      "long_str_latin1": "\u0000\u0001\b\u000e"
+    },
+    {
+      "long_str_hex": "c8d4ff",
+      "num": "s4",
+      "out": "n03e",
+      "long_str_latin1": "ÈÔÿ"
+    },
+    {
+      "long_str_hex": "414243",
+      "num": "s0",
+      "out": "QUJD",
+      "long_str_latin1": "ABC"
+    }
+  ],
+  "generate_random_str": {
+    "out_hex": "8352052c81142204a3110515"
+  },
+  "generate_rc4_bb_str": [
+    {
+      "query": "aid=6383&app_name=douyin_web&live_id=1&device_platform=web&language=zh-CN&browser_language=zh-CN&browser_platform=Win32&browser_name=Chrome&browser_version=116.0.0.0&web_rid=746299965912&is_need_double_stream=false&msToken=",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "out": "69e9a44284e75169d3a14e373774a13c01904b249c6c44f6dcfa7bdbf8a6fa1f51a45c308893845bfa30d19178a93883cca7b03d351dddc960742286204701b9f68a696370693873b34600cbd22f651c13f2f7c86958de82a04dd356b3bb8d4d7269ff6d159fa9419bb6634ed9d7",
+      "url_search_params_list_hex": "4d0a2f94001823c1b718b0b0d87c52f5523d41d1a15c3e1b34615866fa862cfb",
+      "cus_hex": "886572933a4dcfc9d7a29a5df80d8ea06949d7f1533a332bff26a88dd8c223ec",
+      "ua_enc_hex": "958694fdafe410a7311ed92c6d40c49baf5d6760177a56e99cf6c0801417ce634fe5fffdcee702028a3c37d0aae027b5704baa183a557965d960d50779e38e45c2f5bdb3f7ccbedb9af9db6f7e1ef99ee87817336ed3c89fa5cb4443a4156b5ead70b579d1d8923d096463146accfc",
+      "result_s3": "bR56e5eL1UWJZzLu+6p1oDtQ29cgAb+TqM+cEkfgro0MGletrmWdcYYS0tdOVdAxW1mO4pTXAIg2R06ZAA//vWBxF+MHrBa+oFq++HVAC2aYAkWr+zMKqDgBv1/LhIzAPgdxAQZRLNys24865urS",
+      "ua_hex": "81be46ba56c4c73563261dd1f3119d4593683517727e42e4871ea8b96d9cfb58"
+    },
+    {
+      "query": "aid=6383&web_rid=12345",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+      "out": "69e9a44284e75177d3a1ef373774a13c01903b24bc6c44f6dcfa7bdbf8a6fa1f51a45c308893845bfa30d19178a93883cca7b03d351dddc960742286204701b9f68a696370693873b34600cbd22f651c13f2f7c86958de82a04dd356b3bb8d4d7269ff6d159fa9419bb6634ed938",
+      "url_search_params_list_hex": "8868890d7d33d07065e67d84861a72978fd064a98a424e3cf7b126a2612e710f",
+      "cus_hex": "886572933a4dcfc9d7a29a5df80d8ea06949d7f1533a332bff26a88dd8c223ec",
+      "ua_enc_hex": "958694fdafe410a7311ed92c6d40c49baf5d6760177a56e99cf6c0801417ce634fe5fffdcee702028a3c37d0aae027b5704baa183a557965d960d50779e38e45c2f5bdb3f7ccbedb9af9db6f7e1ef99ee87817336ed3c89fa5c84143a4156b5ead70b579d1d8923d096463146accfc",
+      "result_s3": "bR56e5eL1UWJZzLu+6p1oDtQ29cgAb+TqM+cEkfgro0MGletrmWdcYYS0tdOVdAxW1mO4pTXAIg2R06ZAA//vWBxF+MHrBa+oFq++HVAC2aYAkWr+zMKqDgKf6/LhIzAPgdxAQZRLNys24865urS",
+      "ua_hex": "360b1c0d249a7d087240fe3887343beb2d1417afd29b8045a71becdc861dc952"
+    }
+  ],
+  "ab_sign": [
+    {
+      "query": "aid=6383&app_name=douyin_web&live_id=1&device_platform=web&language=zh-CN&browser_language=zh-CN&browser_platform=Win32&browser_name=Chrome&browser_version=116.0.0.0&web_rid=746299965912&is_need_double_stream=false&msToken=",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+      "out": "E7mhBmg6mEVNgf6X5AoLfY3q6Iq3Y6bH0HViMD2fVnVW-g39HMTa9exoCitvThjjxs/gIeYjy4hbO3xprQAjM36UHWwEUdQ2mgWkKl5Q5I0j53iruyRDntmF4vj3SFlm5XNAEOk0y75rKb70Woqe-vIlO62-zo0/9UW="
+    },
+    {
+      "query": "aid=6383&web_rid=12345",
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
+      "out": "E7mhBmg6mEVNgf6X5AoLfY3q61l3YASH0HViMD2f/nVS-g39HMTa9exoCitvThjjxs/gIeYjy4hbO3xprQAjM36UHWwEUdQ2mgWkKl5Q5I0j53iruyRDntmF4vj3SFlm5XNAEOk0y75rKb70Woqe-vIlO62-zo0/93E="
+    }
+  ]
+}

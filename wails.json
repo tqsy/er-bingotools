@@ -1,0 +1,10 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "bingotools",
+  "outputfilename": "bingotools.exe",
+  "frontend:build": "echo ok",
+  "frontend:dev": "echo ok",
+  "frontend:install": "echo ok",
+  "wailsjsdir": "./frontend",
+  "version": "2.13.0"
+}

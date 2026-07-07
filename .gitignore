@@ -1,0 +1,36 @@
+# Build outputs
+build/
+bingotools
+bingotools.exe
+bingotools-linux-amd64
+bingotools-windows-amd64.exe
+*.exe
+
+# Go
+/vendor/
+/go.work
+/go.work.sum
+
+# Node (only used for temporary frontend tests)
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+*.log
+nohup.out
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Wails generated bindings (regenerated on build)
+frontend/wailsjs/
