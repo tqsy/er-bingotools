@@ -433,6 +433,41 @@ body.zoom-mini-source-timer.mode-zoom-right #live1 .live-tip {
 .live-window .live-tip {
   z-index: 2;
 }
+.live-refresh-zone {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 44px;
+  z-index: 5;
+  pointer-events: auto;
+}
+.live-refresh-btn {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  padding: 5px 8px;
+  border-radius: 4px;
+  border: none;
+  background: rgba(0, 0, 0, 0.58);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.live-refresh-zone:hover .live-refresh-btn,
+.live-refresh-btn:hover {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%);
+}
 .live-tip {
   position: absolute;
   inset: 0;
@@ -1158,6 +1193,11 @@ body.mode-zoom-right .cell-mark svg {
   display: flex;
   flex-direction: column;
   max-height: 92vh;
+}
+#setModal.modal-overlay {
+  align-items: flex-start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .modal.modal-set .modal-title {
   flex-shrink: 0;
@@ -2009,6 +2049,9 @@ body.mode-zoom-right .cell-mark svg {
       <div>左直播间</div>
       <div>点击下方按钮设置ID</div>
     </div>
+    <div class="live-refresh-zone" aria-label="左刷新悬停区">
+      <button type="button" class="live-refresh-btn" onclick="refreshLive(1)">刷新</button>
+    </div>
     <div class="live-crop-shell">
       <div class="live-crop-zoom" id="liveCropZoom1">
         <video class="live-video" id="liveVideo1" autoplay muted playsinline></video>
@@ -2046,6 +2089,9 @@ body.mode-zoom-right .cell-mark svg {
     <div class="live-tip" id="tip2">
       <div>右直播间</div>
       <div>点击下方按钮设置ID</div>
+    </div>
+    <div class="live-refresh-zone" aria-label="右刷新悬停区">
+      <button type="button" class="live-refresh-btn" onclick="refreshLive(2)">刷新</button>
     </div>
     <div class="live-crop-shell">
       <div class="live-crop-zoom" id="liveCropZoom2">
@@ -2881,6 +2927,21 @@ async function loadStream(side, source) {
 }
 // ---------- P4 网络流播放工具结束 ----------
 
+function refreshLive(side) {
+  if (side !== 1 && side !== 2) return;
+  if (isSideUsingLocalVideo(side)) {
+    showToast((side === 1 ? '左' : '右') + '侧为本地采集，无需刷新');
+    return;
+  }
+  const source = normalizeLiveSource(liveSources[side]);
+  if (!source.type) {
+    showToast((side === 1 ? '左' : '右') + '侧未设置直播来源');
+    return;
+  }
+  loadStream(side, source);
+  showToast((side === 1 ? '左' : '右') + '侧直播已刷新');
+}
+
 function bilibiliLiveEmbedUrl(roomId) {
   return `https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=${roomId}`;
 }
@@ -3410,6 +3471,10 @@ window.onload = function() {
   startClockTicker();
   syncZoomTimerDisplays();
   applyZoomMiniSource();
+  // 确保客户区为 1920x1080（Wails 的 Width/Height 是外框尺寸）
+  if (window.go && window.go.app && window.go.app.App && typeof window.go.app.App.SetClientSize === 'function') {
+    window.go.app.App.SetClientSize(window.innerWidth, window.innerHeight, 1920, 1080);
+  }
 };
 
 // 保存任务完成情况

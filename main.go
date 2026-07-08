@@ -18,9 +18,11 @@ func main() {
 	a := app.NewApp()
 
 	err := wails.Run(&options.App{
-		Title:  "BingoTools",
-		Width:  1280,
-		Height: 800,
+		Title:     "BingoTools",
+		Width:     1920,
+		Height:    1080,
+		MinWidth:  1280,
+		MinHeight: 720,
 		AssetServer: &assetserver.Options{
 			Assets:  assets,
 			Handler: a.AssetsHandlerForTest(),
