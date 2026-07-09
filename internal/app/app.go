@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/wailsapp/wails/v2/pkg/runtime"
+
 	"bingotools/internal/bilibili"
 	"bingotools/internal/douyin"
 	"bingotools/internal/proxy"
@@ -36,6 +38,20 @@ func NewApp() *App {
 
 func (a *App) OnStartup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+// SetClientSize 根据当前客户区大小调整窗口外框，使客户区达到 targetW x targetH。
+// 前端传入 window.innerWidth/innerHeight，Go 侧用当前外框与目标差值计算新外框。
+func (a *App) SetClientSize(currentW, currentH, targetW, targetH int) {
+	if a.ctx == nil {
+		return
+	}
+	outerW, outerH := runtime.WindowGetSize(a.ctx)
+	newW := outerW + targetW - currentW
+	newH := outerH + targetH - currentH
+	if newW > 0 && newH > 0 {
+		runtime.WindowSetSize(a.ctx, newW, newH)
+	}
 }
 
 // StartupForTest 供无窗口测试注入 ctx。
