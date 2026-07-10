@@ -3220,6 +3220,8 @@ let liveMuted = { 1: true, 2: true };
 let liveDelayTicker = null;
 let delayPreviewPlayers = { 1: null, 2: null };
 let delaySyncSnapshot = null;
+const LIVE_DELAY_MONITOR_MS = 3000;
+const LIVE_DELAY_DRIFT_SEC = 1.5;
 let cellNoteHoverTimer = null;
 let cellNoteActiveCell = null;
 
@@ -3282,19 +3284,25 @@ async function loadStream(side, source) {
         isLive: true,
         hasAudio: true,
         hasVideo: true,
-        cors: false
+        cors: false,
+        enableStashBuffer: true,
+        stashInitialSize: 512
       });
       liveStreamPlayers[side] = player;
       player.attachMediaElement(video);
       player.load();
       player.play();
+      scheduleLiveDelayApply(side, video, player, res.kind);
     } else if (res.kind === 'hls') {
       if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-        const player = new Hls({ enableWorker: true, liveSyncDurationCount: 3 });
+        const player = new Hls(buildHlsPlayerConfig(side));
         liveStreamPlayers[side] = player;
         player.loadSource('/live/stream/' + side);
         player.attachMedia(video);
-        player.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => {}); });
+        player.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play().catch(() => {});
+          scheduleLiveDelayApply(side, video, player, res.kind);
+        });
         player.on(Hls.Events.ERROR, (e, d) => {
           if (d.fatal) {
             console.error('HLS fatal error', d);
@@ -3304,6 +3312,7 @@ async function loadStream(side, source) {
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = '/live/stream/' + side;
         video.play().catch(() => {});
+        scheduleLiveDelayApply(side, video, null, res.kind);
       } else {
         setLiveTip(side, '当前浏览器不支持 HLS 播放', '');
         return;
@@ -3311,10 +3320,11 @@ async function loadStream(side, source) {
     } else {
       video.src = '/live/stream/' + side;
       video.play().catch(() => {});
+      scheduleLiveDelayApply(side, video, null, res.kind || 'hls');
     }
     applyLiveCropToMain(side);
     applyLiveMute(side);
-    startLiveDelayTicker();
+    ensureLiveDelayTicker();
   } catch (e) {
     console.error('ResolveLive error', e);
     setLiveTip(side, '取流失败', e && e.message ? e.message : '');
@@ -3401,45 +3411,219 @@ function loadLiveDelay() {
   } catch (e) {}
 }
 
-function applyLiveDelayToVideo(side) {
-  const video = getActiveLiveVideo(side);
+function getTargetLiveDelaySec(side) {
+  return Math.max(0, (liveDelayMs[side] || 0) / 1000);
+}
+
+function buildHlsPlayerConfig(side) {
+  const delaySec = getTargetLiveDelaySec(side);
+  const cfg = { enableWorker: true };
+  if (delaySec > 0) {
+    cfg.liveSyncDuration = delaySec;
+    cfg.liveMaxLatencyDuration = Math.max(delaySec + 5, 10);
+  } else {
+    cfg.liveSyncDurationCount = 3;
+  }
+  return cfg;
+}
+
+function applyHlsPlayerDelay(player, side) {
+  if (!player || !player.config) return;
+  const delaySec = getTargetLiveDelaySec(side);
+  if (delaySec > 0) {
+    player.config.liveSyncDuration = delaySec;
+    player.config.liveMaxLatencyDuration = Math.max(delaySec + 5, 10);
+    player.config.liveSyncDurationCount = undefined;
+  } else {
+    player.config.liveSyncDurationCount = 3;
+    player.config.liveSyncDuration = undefined;
+    player.config.liveMaxLatencyDuration = undefined;
+  }
+}
+
+function measureLiveDelaySec(video) {
+  if (!video || !video.buffered || video.buffered.length === 0) return null;
+  try {
+    const end = video.buffered.end(video.buffered.length - 1);
+    return end - video.currentTime;
+  } catch (e) {
+    return null;
+  }
+}
+
+function seekVideoToTargetDelay(video, delaySec) {
+  if (!video || delaySec <= 0) return false;
+  try {
+    if (!video.buffered || video.buffered.length === 0) return false;
+    const end = video.buffered.end(video.buffered.length - 1);
+    const start = video.buffered.start(0);
+    if (end - start + 0.05 < delaySec) return false;
+    video.currentTime = Math.max(start, end - delaySec);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function seekFlvVideoToTargetDelay(video, delaySec) {
+  return seekVideoToTargetDelay(video, delaySec);
+}
+
+function seekFlvVideoToLiveEdge(video) {
   if (!video) return;
-  const delaySec = (liveDelayMs[side] || 0) / 1000;
-  if (delaySec <= 0) return;
   try {
     if (video.buffered && video.buffered.length > 0) {
       const end = video.buffered.end(video.buffered.length - 1);
-      const target = Math.max(0, end - delaySec);
-      if (Math.abs(video.currentTime - target) > 0.2) {
-        video.currentTime = target;
-      }
+      video.currentTime = Math.max(0, end - 0.3);
     }
   } catch (e) {}
+}
+
+function forceApplyLiveDelayOnTarget(side, video, player, kind) {
+  const delaySec = getTargetLiveDelaySec(side);
+  if (!video || isSideUsingLocalVideo(side)) return;
+
+  if (kind === 'hls' && player && player.config) {
+    applyHlsPlayerDelay(player, side);
+  }
+
+  if (delaySec <= 0) {
+    seekFlvVideoToLiveEdge(video);
+    if (video.paused) video.play().catch(() => {});
+    return;
+  }
+
+  if (seekVideoToTargetDelay(video, delaySec)) {
+    if (video.paused) video.play().catch(() => {});
+    return;
+  }
+
+  const wasPaused = video.paused;
+  video.pause();
+  let attempts = 0;
+  const trySeek = () => {
+    attempts += 1;
+    if (seekVideoToTargetDelay(video, delaySec)) {
+      video.play().catch(() => {});
+      return;
+    }
+    if (attempts < 60) {
+      setTimeout(trySeek, 500);
+    } else if (!wasPaused) {
+      video.play().catch(() => {});
+    }
+  };
+  setTimeout(trySeek, 300);
+}
+
+function applyLiveDelayToTarget(side, video, player, kind, opts) {
+  opts = opts || {};
+  const force = !!opts.force;
+  const delaySec = getTargetLiveDelaySec(side);
+  if (isSideUsingLocalVideo(side)) return;
+
+  if (force) {
+    forceApplyLiveDelayOnTarget(side, video, player, kind);
+    return;
+  }
+
+  if (kind === 'hls' && player && player.config) {
+    applyHlsPlayerDelay(player, side);
+    return;
+  }
+
+  if (kind === 'flv' && video && delaySec > 0) {
+    seekVideoToTargetDelay(video, delaySec);
+    return;
+  }
+
+  if (video && delaySec > 0) {
+    seekVideoToTargetDelay(video, delaySec);
+  } else if (video && delaySec <= 0) {
+    seekFlvVideoToLiveEdge(video);
+  }
+}
+
+function monitorLiveDelayForTarget(side, video, player, kind) {
+  const delaySec = getTargetLiveDelaySec(side);
+  if (delaySec <= 0 || isSideUsingLocalVideo(side)) return;
+
+  if (kind === 'hls') {
+    const measured = measureLiveDelaySec(video);
+    if (measured != null && Math.abs(measured - delaySec) > LIVE_DELAY_DRIFT_SEC) {
+      if (player) applyHlsPlayerDelay(player, side);
+      seekVideoToTargetDelay(video, delaySec);
+    }
+    return;
+  }
+
+  if (kind === 'flv' && video) {
+    const measured = measureLiveDelaySec(video);
+    if (measured == null) return;
+    if (Math.abs(measured - delaySec) > LIVE_DELAY_DRIFT_SEC) {
+      seekFlvVideoToTargetDelay(video, delaySec);
+    }
+  }
+}
+
+function applyLiveDelayToSide(side, opts) {
+  const kind = liveStreamKinds[side];
+  const video = document.getElementById('liveVideo' + side);
+  const player = liveStreamPlayers[side];
+  if (!kind || !video || video.classList.contains('hide')) return;
+  applyLiveDelayToTarget(side, video, player, kind, opts);
+}
+
+function applyLiveDelayToPreviewSide(side, opts) {
+  const kind = liveStreamKinds[side];
+  const video = document.getElementById('delayPreviewVideo' + side);
+  const player = delayPreviewPlayers[side];
+  if (!kind || !video) return;
+  applyLiveDelayToTarget(side, video, player, kind, opts);
+}
+
+function scheduleLiveDelayApply(side, video, player, kind) {
+  if (!video) return;
+  const run = () => forceApplyLiveDelayOnTarget(side, video, player, kind);
+  if (video.readyState >= 2) {
+    setTimeout(run, 500);
+    return;
+  }
+  video.addEventListener('canplay', () => setTimeout(run, 500), { once: true });
+}
+
+function needsLiveDelayMonitoring() {
+  if (liveDelayMs[1] > 0 || liveDelayMs[2] > 0) return true;
+  const modal = document.getElementById('delaySyncModal');
+  return !!(modal && !modal.classList.contains('modal-hide'));
+}
+
+function stopLiveDelayTicker() {
+  if (!liveDelayTicker) return;
+  clearInterval(liveDelayTicker);
+  liveDelayTicker = null;
 }
 
 function startLiveDelayTicker() {
   if (liveDelayTicker) return;
   liveDelayTicker = setInterval(() => {
-    [1, 2].forEach(applyLiveDelayToVideo);
     [1, 2].forEach((side) => {
-      if (delayPreviewPlayers[side]) applyLiveDelayToVideoOnEl(document.getElementById('delayPreviewVideo' + side), side);
+      const kind = liveStreamKinds[side];
+      const video = document.getElementById('liveVideo' + side);
+      if (kind && video && !video.classList.contains('hide') && !isSideUsingLocalVideo(side)) {
+        monitorLiveDelayForTarget(side, video, liveStreamPlayers[side], kind);
+      }
+      const previewVideo = document.getElementById('delayPreviewVideo' + side);
+      if (kind && delayPreviewPlayers[side] && previewVideo) {
+        monitorLiveDelayForTarget(side, previewVideo, delayPreviewPlayers[side], kind);
+      }
     });
-  }, 400);
+  }, LIVE_DELAY_MONITOR_MS);
 }
 
-function applyLiveDelayToVideoOnEl(video, side) {
-  if (!video) return;
-  const delaySec = (liveDelayMs[side] || 0) / 1000;
-  if (delaySec <= 0) return;
-  try {
-    if (video.buffered && video.buffered.length > 0) {
-      const end = video.buffered.end(video.buffered.length - 1);
-      const target = Math.max(0, end - delaySec);
-      if (Math.abs(video.currentTime - target) > 0.2) {
-        video.currentTime = target;
-      }
-    }
-  } catch (e) {}
+function ensureLiveDelayTicker() {
+  if (needsLiveDelayMonitoring()) startLiveDelayTicker();
+  else stopLiveDelayTicker();
 }
 
 function stopDelayPreviewPlayers() {
@@ -3484,21 +3668,28 @@ function startDelayPreview(side) {
       isLive: true,
       hasAudio: false,
       hasVideo: true,
-      cors: false
+      cors: false,
+      enableStashBuffer: true,
+      stashInitialSize: 512
     });
     delayPreviewPlayers[side] = player;
     player.attachMediaElement(video);
     player.load();
     player.play();
+    scheduleLiveDelayApply(side, video, player, kind);
   } else if (kind === 'hls' && typeof Hls !== 'undefined' && Hls.isSupported()) {
-    const player = new Hls({ enableWorker: true, liveSyncDurationCount: 3 });
+    const player = new Hls(buildHlsPlayerConfig(side));
     delayPreviewPlayers[side] = player;
     player.loadSource(streamUrl);
     player.attachMedia(video);
-    player.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => {}); });
+    player.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.play().catch(() => {});
+      scheduleLiveDelayApply(side, video, player, kind);
+    });
   } else {
     video.src = streamUrl;
     video.play().catch(() => {});
+    scheduleLiveDelayApply(side, video, null, kind);
   }
 }
 
@@ -3519,8 +3710,9 @@ function onDelaySliderInput(side) {
   const ms = Math.max(0, Math.min(15000, parseInt(slider.value, 10) || 0));
   liveDelayMs[side] = ms;
   if (label) label.textContent = (ms / 1000).toFixed(1) + 's';
-  applyLiveDelayToVideo(side);
-  applyLiveDelayToVideoOnEl(document.getElementById('delayPreviewVideo' + side), side);
+  applyLiveDelayToSide(side, { force: true });
+  applyLiveDelayToPreviewSide(side, { force: true });
+  ensureLiveDelayTicker();
 }
 
 function showDelaySyncModal() {
@@ -3528,33 +3720,39 @@ function showDelaySyncModal() {
   syncDelaySliderUI();
   stopDelayPreviewPlayers();
   [1, 2].forEach(startDelayPreview);
-  startLiveDelayTicker();
+  ensureLiveDelayTicker();
   document.getElementById('delaySyncModal').classList.remove('modal-hide');
 }
 
 function hideDelaySyncModal(revert) {
   if (revert && delaySyncSnapshot) {
     liveDelayMs = { ...delaySyncSnapshot };
-    [1, 2].forEach(applyLiveDelayToVideo);
+    [1, 2].forEach((side) => applyLiveDelayToSide(side, { force: true }));
   }
   stopDelayPreviewPlayers();
   document.getElementById('delaySyncModal').classList.add('modal-hide');
   delaySyncSnapshot = null;
+  ensureLiveDelayTicker();
 }
 
 function saveDelaySyncAndClose() {
   saveLiveDelay();
   delaySyncSnapshot = { ...liveDelayMs };
+  [1, 2].forEach((side) => applyLiveDelayToSide(side, { force: true }));
   stopDelayPreviewPlayers();
   document.getElementById('delaySyncModal').classList.add('modal-hide');
+  ensureLiveDelayTicker();
   showToast('延迟同步已保存');
 }
 
 function resetDelaySync() {
   liveDelayMs = { 1: 0, 2: 0 };
   syncDelaySliderUI();
-  [1, 2].forEach(applyLiveDelayToVideo);
-  [1, 2].forEach((side) => applyLiveDelayToVideoOnEl(document.getElementById('delayPreviewVideo' + side), side));
+  [1, 2].forEach((side) => {
+    applyLiveDelayToSide(side, { force: true });
+    applyLiveDelayToPreviewSide(side, { force: true });
+  });
+  ensureLiveDelayTicker();
   showToast('两侧延迟已重置为 0');
 }
 
@@ -4163,7 +4361,7 @@ window.onload = function() {
   loadSetSectionCollapseState();
   loadLiveDelay();
   loadLiveMuted();
-  startLiveDelayTicker();
+  ensureLiveDelayTicker();
   initNumericWheelAdjust();
   applyContentFontSizes();
   startClockTicker();
@@ -6716,7 +6914,7 @@ async function captureLocalScreen(side, opts = {}) {
     }
     if (tip) tip.classList.add('hide');
     applyLiveMute(side);
-    startLiveDelayTicker();
+    ensureLiveDelayTicker();
     const track = stream.getVideoTracks()[0];
     if (track) {
       track.onended = function () {
