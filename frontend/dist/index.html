@@ -69,26 +69,33 @@ body {
   background-repeat: no-repeat;
   opacity: 0;
 }
-.page-header-banner {
-  flex-shrink: 0;
-  text-align: center;
-  padding: 8px 16px;
-  background: rgba(var(--surface-rgb), var(--surface-panel-a));
-  border: 1px solid rgba(var(--surface-border-rgb), var(--surface-panel-a));
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--theme-font);
-  line-height: 1.4;
-  word-break: break-word;
-}
-.page-header-banner.is-hidden {
-  display: none !important;
-}
 .app-main{flex:1;display:flex;flex-direction:column;gap:15px;min-height:0;}
-.zoom-restore-bar{display:none;width:100%;padding:10px 14px;border:none;border-radius:8px;background:#ffca28;color:#263238;font-size:15px;font-weight:700;cursor:pointer;text-align:center;flex-shrink:0;}
-.zoom-restore-bar:hover{filter:brightness(1.05);}
-body.mode-zoom-left #zoomRestoreBtn,body.mode-zoom-right #zoomRestoreBtn{display:block!important;}
+.zoom-restore-bar{
+  position:fixed;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  min-width:168px;
+  max-width:min(420px,calc(100vw - 24px));
+  padding:10px 20px;
+  border:2px solid #1a1a1e;
+  border-radius:8px;
+  background:#ffca28!important;
+  color:#263238!important;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  text-align:center;
+  z-index:10050;
+  box-shadow:0 4px 18px rgba(0,0,0,0.55);
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto;
+}
+.zoom-restore-bar.hide{display:none!important;}
+.zoom-restore-bar:hover{filter:brightness(1.06);transform:translateX(-50%) translateY(-1px);}
+button.zoom-restore-bar:hover{transform:translateX(-50%) translateY(-1px);}
 .btn-zoom-live{background:#fb8c00!important;color:#fff!important;}
 .btn-zoom-live:hover{filter:brightness(1.06);}
 body.mode-zoom-left #timerArea,body.mode-zoom-right #timerArea,body.mode-zoom-left .right-area,body.mode-zoom-right .right-area{display:none!important;}
@@ -103,6 +110,111 @@ body.mode-zoom-left .score-panel-right .extra-score-btns,
 body.mode-zoom-right .score-panel-left .extra-score-btns,
 body.mode-zoom-right .score-panel-right .extra-score-btns{display:none!important;}
 body.mode-zoom-left .cell,body.mode-zoom-right .cell{cursor:default;pointer-events:none;}
+/* 表格展示模式 */
+body.mode-table-focus .live-container{
+  flex:0 0 14vh;
+  min-height:88px;
+  max-height:16vh;
+}
+body.mode-table-focus .bingo-container{
+  flex:1 1 auto;
+  min-height:0;
+  padding:2px 4px;
+  gap:8px;
+}
+body.mode-table-focus #timerArea,
+body.mode-table-focus #memoArea{display:none!important;}
+body.mode-table-focus .btns-toolbar,
+body.mode-table-focus .btns-fold-btn{display:none!important;}
+body.mode-table-focus .score-panel-left .add-score-btn,
+body.mode-table-focus .score-panel-right .add-score-btn,
+body.mode-table-focus .score-panel-left .extra-score-btns,
+body.mode-table-focus .score-panel-right .extra-score-btns,
+body.mode-table-focus .zoom-timer-panel{display:none!important;}
+body.mode-table-focus .score-box .total,
+body.mode-table-focus .score-box .score-meta{display:none!important;}
+body.mode-table-focus .score-panel-left,
+body.mode-table-focus .score-panel-right{
+  flex:0 0 72px;
+  width:72px;
+  min-width:72px;
+  max-width:72px;
+  gap:0;
+}
+body.mode-table-focus .score-box{
+  flex:1 1 auto;
+  min-height:0;
+  padding:8px 4px;
+}
+body.mode-table-focus .score-stack{
+  justify-content:center;
+  gap:0;
+}
+body.mode-table-focus .name{
+  font-size:clamp(11px,calc(var(--player-name-font-size,20px)*0.72),40px);
+  line-height:1.2;
+  word-break:break-word;
+}
+body.mode-table-focus .bingo-table-wrap{
+  flex:1 1 auto;
+  min-height:0;
+  min-width:0;
+}
+body.mode-table-focus .grid{
+  flex:1 1 auto;
+  min-height:0;
+  height:100%;
+  max-height:100%;
+}
+body.mode-table-focus .cell{
+  cursor:default;
+  pointer-events:none;
+}
+body.mode-table-focus .live-overlay-zone,
+body.mode-table-focus .zoom-mini-switcher,
+body.mode-table-focus .zoom-mini-timer{display:none!important;}
+body.mode-table-focus .live-tip{pointer-events:none;}
+body.mode-table-focus.show-cell-notes .cell.has-cell-note{
+  pointer-events:auto;
+}
+.cell-inline-note{
+  display:none;
+  position:relative;
+  z-index:10001;
+  width:100%;
+  margin-top:4px;
+  padding:3px 4px;
+  border-radius:4px;
+  background:rgba(0,0,0,0.72);
+  border:1px solid #ffca28;
+  color:#ffecb3;
+  font-size:var(--cell-note-font-size,14px);
+  line-height:1.3;
+  font-weight:normal;
+  word-break:break-word;
+  pointer-events:none;
+}
+body.mode-table-focus.show-cell-notes .cell-inline-note{
+  display:block;
+}
+.cell-notes-preamble-bar{
+  display:none;
+  width:100%;
+  flex-shrink:0;
+  padding:8px 12px;
+  border-radius:6px;
+  background:rgba(0,0,0,0.78);
+  border:2px solid #ffca28;
+  color:#fff;
+  font-size:var(--cell-note-font-size,14px);
+  line-height:1.45;
+  white-space:pre-wrap;
+  word-break:break-word;
+  box-shadow:0 0 0 1px rgba(255,202,40,0.35);
+}
+body.mode-table-focus.show-cell-notes .cell-notes-preamble-bar.is-visible{
+  display:block;
+}
 /* 放大直播布局 */
 body.mode-zoom-left #appMain,
 body.mode-zoom-right #appMain{
@@ -110,20 +222,18 @@ body.mode-zoom-right #appMain{
   gap:10px;
   flex:1;
   min-height:0;
-  grid-template-rows:38px minmax(150px,0.48fr) minmax(120px,0.52fr);
+  grid-template-rows:minmax(150px,0.48fr) minmax(120px,0.52fr);
 }
 body.mode-zoom-right #appMain{grid-template-columns:minmax(200px,34%) 1fr;}
 body.mode-zoom-left #appMain{grid-template-columns:1fr minmax(200px,34%);}
-body.mode-zoom-right #zoomRestoreBtn{grid-column:1;grid-row:1;}
-body.mode-zoom-right #bingoContainer{grid-column:1;grid-row:2;flex:unset;min-height:0;overflow:hidden;align-self:stretch;}
+body.mode-zoom-right #bingoContainer{grid-column:1;grid-row:1;flex:unset;min-height:0;overflow:hidden;align-self:stretch;}
 body.mode-zoom-right #liveContainer{display:contents;}
-body.mode-zoom-right #live1{grid-column:1;grid-row:3;flex:unset;min-height:0;height:100%;}
-body.mode-zoom-right #live2{grid-column:2;grid-row:1/span 3;flex:unset;min-height:0;height:100%;}
-body.mode-zoom-left #zoomRestoreBtn{grid-column:2;grid-row:1;}
-body.mode-zoom-left #bingoContainer{grid-column:2;grid-row:2;flex:unset;min-height:0;overflow:hidden;align-self:stretch;}
+body.mode-zoom-right #live1{grid-column:1;grid-row:2;flex:unset;min-height:0;height:100%;}
+body.mode-zoom-right #live2{grid-column:2;grid-row:1/span 2;flex:unset;min-height:0;height:100%;}
+body.mode-zoom-left #bingoContainer{grid-column:2;grid-row:1;flex:unset;min-height:0;overflow:hidden;align-self:stretch;}
 body.mode-zoom-left #liveContainer{display:contents;}
-body.mode-zoom-left #live2{grid-column:2;grid-row:3;flex:unset;min-height:0;height:100%;}
-body.mode-zoom-left #live1{grid-column:1;grid-row:1/span 3;flex:unset;min-height:0;height:100%;}
+body.mode-zoom-left #live2{grid-column:2;grid-row:2;flex:unset;min-height:0;height:100%;}
+body.mode-zoom-left #live1{grid-column:1;grid-row:1/span 2;flex:unset;min-height:0;height:100%;}
 body.mode-zoom-left #bingoContainer,
 body.mode-zoom-right #bingoContainer{
   padding:4px 2px;
@@ -433,23 +543,22 @@ body.zoom-mini-source-timer.mode-zoom-right #live1 .live-tip {
 .live-window .live-tip {
   z-index: 2;
 }
-.live-refresh-zone {
+.live-overlay-zone {
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 120px;
+  width: 200px;
   height: 44px;
   z-index: 5;
-  pointer-events: auto;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
-.live-refresh-btn {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  padding: 5px 8px;
+.live-overlay-btn {
+  padding: 5px 10px;
   border-radius: 4px;
   border: none;
   background: rgba(0, 0, 0, 0.58);
@@ -461,12 +570,15 @@ body.zoom-mini-source-timer.mode-zoom-right #live1 .live-tip {
   opacity: 0;
   transition: opacity 0.2s;
   pointer-events: none;
+  white-space: nowrap;
 }
-.live-refresh-zone:hover .live-refresh-btn,
-.live-refresh-btn:hover {
+.live-window:hover .live-overlay-btn,
+.live-overlay-btn:hover {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(-50%);
+}
+.live-overlay-btn.is-unmuted {
+  background: rgba(0, 137, 123, 0.75);
 }
 .live-tip {
   position: absolute;
@@ -770,22 +882,20 @@ body.zoom-mini-source-timer.mode-zoom-right #live1 .live-tip {
   display: none !important;
 }
 .timer-area-only-clock .timer-box-clock {
-  flex: 0 0 calc((100% - 24px) / 3);
-  height: calc((100% - 24px) / 3);
-  min-height: calc((100% - 24px) / 3);
-  max-height: calc((100% - 24px) / 3);
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
 }
-.timer-area-only-clock .timer-box-clock .clock-date-display {
-  font-size: 15px;
-  flex: 0 0 auto;
-  min-height: auto;
-  padding: 5px 6px;
-  line-height: 1.35;
-}
+.timer-area-only-clock .timer-box-clock .clock-date-display,
 .timer-area-only-clock .timer-box-clock .clock-time-display {
-  font-size: 24px;
-  flex: 0 0 auto;
-  min-height: auto;
+  flex: 1 1 0;
+  min-height: 0;
+  font-size: var(--timer-font-size, 22px);
+  padding: 6px;
+  line-height: 1.2;
+}
+.timer-box-clock .timer-title {
+  display: none;
 }
 .timer-title {
   font-size: 14px;
@@ -1406,19 +1516,12 @@ body.mode-zoom-right .cell-mark svg {
   margin-bottom: 8px;
   letter-spacing: 0.02em;
 }
-.set-ui-beautify-header-row {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-}
-.set-ui-beautify-header-row .set-field {
-  flex: 1;
-  min-width: 0;
-  max-width: 320px;
-}
-.set-ui-beautify-header-row .btn-set-action {
-  flex-shrink: 0;
-  white-space: nowrap;
+.set-ui-beautify-block-title {
+  font-size: 12px;
+  color: #ffcc80;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
 }
 .set-ui-toggle-grid {
   display: grid;
@@ -1430,6 +1533,17 @@ body.mode-zoom-right .cell-mark svg {
   box-sizing: border-box;
   justify-content: center;
   text-align: center;
+  white-space: normal;
+  line-height: 1.25;
+  min-height: 36px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+.modal-set:has(.dice-area:not(.hide-dice)) .set-ui-beautify-grid {
+  grid-template-columns: 1fr;
+}
+.modal-set:has(.dice-area:not(.hide-dice)) .set-ui-toggle-grid-3 {
+  grid-template-columns: 1fr 1fr;
 }
 .set-ui-toggle-grid-3 {
   grid-template-columns: repeat(3, 1fr);
@@ -1961,17 +2075,129 @@ body.mode-zoom-right .cell-mark svg {
   color: #888;
   line-height: 1.45;
 }
+.timer-box-clock .clock-date-display,
+.timer-box-clock .clock-time-display {
+  flex: 1 1 0;
+  min-height: 0;
+  font-size: var(--timer-font-size, 22px);
+}
+.timer-box-clock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 .timer-box-clock .clock-date-display {
-  font-size: 15px;
-  flex: 0 0 auto;
-  min-height: auto;
-  padding: 5px 6px;
+  padding: 6px;
   line-height: 1.35;
 }
 .timer-box-clock .clock-time-display {
-  font-size: 24px;
-  flex: 0 0 auto;
-  min-height: auto;
+  padding: 6px;
+  line-height: 1.1;
+}
+.timer-box .timer-display {
+  font-size: var(--timer-font-size, 28px);
+}
+.zoom-timer-value,
+.zoom-mini-timer-card .zoom-timer-value {
+  font-size: var(--timer-font-size, 14px);
+}
+body.mode-zoom-left .zoom-timer-panel .zoom-timer-value,
+body.mode-zoom-right .zoom-timer-panel .zoom-timer-value {
+  font-size: calc(var(--timer-font-size, 15px) * 1.5);
+}
+.zoom-mini-timer-card .zoom-timer-value {
+  font-size: calc(var(--timer-font-size, 24px) * 1.7);
+}
+.cell-note-tooltip {
+  position: fixed;
+  z-index: 1200;
+  max-width: 260px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.88);
+  border: 2px solid #ffca28;
+  color: #fff;
+  font-size: var(--cell-note-font-size, 14px);
+  line-height: 1.4;
+  word-break: break-word;
+  pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(255, 202, 40, 0.45), 0 4px 16px rgba(255, 202, 40, 0.28);
+}
+.cell-note-tooltip.hide {
+  display: none !important;
+}
+.cell.cell-note-active {
+  background: rgba(255, 202, 40, 0.24) !important;
+  border-color: #ffca28 !important;
+  box-shadow: 0 0 0 2px rgba(255, 202, 40, 0.5), 0 4px 16px rgba(255, 202, 40, 0.28);
+  z-index: 12;
+}
+.cell-text-mode-toggle {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #546e7a;
+  background: #546e7a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cell-text-mode-toggle.is-note-mode {
+  background: #00897b;
+  border-color: #00897b;
+}
+.delay-preview-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.delay-preview-box {
+  position: relative;
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #444;
+}
+.delay-preview-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.delay-preview-label {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 11px;
+  color: #ffcc80;
+  background: rgba(0,0,0,0.6);
+  padding: 2px 6px;
+  border-radius: 4px;
+  z-index: 2;
+}
+.delay-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.delay-slider-row label {
+  flex: 0 0 72px;
+  font-size: 13px;
+  color: #ccc;
+}
+.delay-slider-row input[type="range"] {
+  flex: 1;
+}
+.delay-slider-val {
+  flex: 0 0 52px;
+  text-align: right;
+  font-size: 13px;
+  color: #ffcc80;
+}
+input[type="number"].wheel-adjust-active {
+  outline: 1px solid #ffcc80;
 }
 .font-size-preview {
   border: 1px solid #333;
@@ -2027,6 +2253,68 @@ body.mode-zoom-right .cell-mark svg {
   line-height: 1.4;
   background: rgba(var(--surface-rgb), var(--surface-panel-a));
 }
+.font-size-preview-timer {
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 10px;
+  color: var(--theme-font);
+  font-weight: bold;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: var(--timer-font-size, 28px);
+  background: rgba(var(--surface-mid-rgb), var(--surface-cell-a));
+}
+.font-size-preview-cell-note-wrap {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  min-height: 96px;
+}
+.font-size-preview-cell-note-wrap .font-size-preview-cell-mini {
+  flex: 0 0 42%;
+  min-width: 0;
+  border: 2px solid #ffca28;
+  border-radius: 6px;
+  padding: 10px 8px;
+  background: rgba(255, 202, 40, 0.24);
+  box-shadow: 0 0 0 2px rgba(255, 202, 40, 0.5), 0 4px 16px rgba(255, 202, 40, 0.28);
+  font-size: var(--cell-font-size, 22px);
+  font-weight: 600;
+  color: var(--theme-font);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-word;
+}
+.font-size-preview-note {
+  flex: 1;
+  min-width: 0;
+  align-self: center;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.88);
+  border: 2px solid #ffca28;
+  color: #fff;
+  line-height: 1.4;
+  word-break: break-word;
+  box-shadow: 0 0 0 1px rgba(255, 202, 40, 0.45), 0 4px 16px rgba(255, 202, 40, 0.28);
+  text-align: left;
+  font-weight: normal;
+}
+.btn-set-action.is-selected {
+  border: 2px solid #ffca28 !important;
+  background: rgba(255, 202, 40, 0.28) !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 1px rgba(255, 202, 40, 0.45);
+}
+.set-ui-cell-notes-row {
+  margin-top: 10px;
+}
+.set-ui-cell-notes-row .modal-label {
+  margin-bottom: 6px;
+  display: block;
+}
 .beautify-preview-chip {
   width: 28px;
   height: 28px;
@@ -2038,19 +2326,20 @@ body.mode-zoom-right .cell-mark svg {
 </head>
 <body>
 <div id="beautifyBgLayer" aria-hidden="true"></div>
-<div id="pageHeaderBanner" class="page-header-banner is-hidden"><span id="pageHeaderBannerText"></span></div>
+<button type="button" id="zoomRestoreBtn" class="zoom-restore-bar hide" onclick="exitZoomLive()">还原画面</button>
+<button type="button" id="tableFocusRestoreBtn" class="zoom-restore-bar hide" onclick="exitTableFocusMode()">还原布局</button>
+<div id="cellNoteTooltip" class="cell-note-tooltip hide" aria-hidden="true"></div>
 
 <div id="appMain" class="app-main">
-<button type="button" id="zoomRestoreBtn" class="zoom-restore-bar hide" onclick="exitZoomLive()">还原画面</button>
-
 <!-- 直播 -->
 <div class="live-container" id="liveContainer">  <div class="live-window" id="live1">
     <div class="live-tip" id="tip1">
       <div>左直播间</div>
       <div>点击下方按钮设置ID</div>
     </div>
-    <div class="live-refresh-zone" aria-label="左刷新悬停区">
-      <button type="button" class="live-refresh-btn" onclick="refreshLive(1)">刷新</button>
+    <div class="live-overlay-zone" aria-label="左画面控制">
+      <button type="button" class="live-overlay-btn" id="liveMuteBtn1" onclick="toggleLiveMute(1)">静音</button>
+      <button type="button" class="live-overlay-btn" onclick="refreshLive(1)">刷新</button>
     </div>
     <div class="live-crop-shell">
       <div class="live-crop-zoom" id="liveCropZoom1">
@@ -2090,8 +2379,9 @@ body.mode-zoom-right .cell-mark svg {
       <div>右直播间</div>
       <div>点击下方按钮设置ID</div>
     </div>
-    <div class="live-refresh-zone" aria-label="右刷新悬停区">
-      <button type="button" class="live-refresh-btn" onclick="refreshLive(2)">刷新</button>
+    <div class="live-overlay-zone" aria-label="右画面控制">
+      <button type="button" class="live-overlay-btn" id="liveMuteBtn2" onclick="toggleLiveMute(2)">静音</button>
+      <button type="button" class="live-overlay-btn" onclick="refreshLive(2)">刷新</button>
     </div>
     <div class="live-crop-shell">
       <div class="live-crop-zoom" id="liveCropZoom2">
@@ -2133,7 +2423,6 @@ body.mode-zoom-right .cell-mark svg {
   <!-- 计时 -->
   <div class="left-area" id="timerArea">
     <div class="timer-box timer-box-clock">
-      <div class="timer-title">时钟</div>
       <div class="timer-display clock-date-display" id="clock-date-display">----年--月--日</div>
       <div class="timer-display clock-time-display" id="clock-display">00:00:00</div>
     </div>
@@ -2192,11 +2481,14 @@ body.mode-zoom-right .cell-mark svg {
     <div class="btns-toolbar" id="btnsToolbar">
       <div class="btns">
         <button class="btn-set" onclick="showSetModal()">全局设置</button>
+        <button class="btn-set" onclick="showDelaySyncModal()">延迟同步</button>
         <button class="btn-set" onclick="showFontSizeModal()">字体大小</button>
         <button class="btn-reset" onclick="resetAll()">重置全表</button>
         <button class="btn-reset" onclick="resetSettle()">重置结算</button>
+        <button class="btn-set" onclick="enterTableFocusMode()">表格展示模式</button>
       </div>
     </div>
+    <div class="cell-notes-preamble-bar hide" id="cellNotesPreambleBar" aria-live="polite"></div>
     <!-- 格子表 -->
     <div class="grid" id="grid"></div>
   </div>
@@ -2424,16 +2716,6 @@ body.mode-zoom-right .cell-mark svg {
         </div>
         <div class="set-section-body">
           <div class="set-ui-beautify-grid">
-            <div class="set-ui-beautify-block set-ui-beautify-block-full">
-              <div class="set-ui-beautify-block-title">表头</div>
-              <div class="set-ui-beautify-header-row">
-                <div class="set-field">
-                  <label class="modal-label" for="headerText">表头内容</label>
-                  <input type="text" class="modal-input" id="headerText" autocomplete="off" placeholder="显示在画面最上方居中">
-                </div>
-                <button type="button" class="btn-set btn-set-action" onclick="toggleHeader()">显隐表头</button>
-              </div>
-            </div>
             <div class="set-ui-beautify-block">
               <div class="set-ui-beautify-block-title">侧栏与布局</div>
               <div class="set-ui-toggle-grid">
@@ -2456,6 +2738,17 @@ body.mode-zoom-right .cell-mark svg {
               <div class="set-ui-toggle-grid set-ui-toggle-grid-2">
                 <button type="button" class="btn-set btn-set-action" onclick="toggleDice()">显隐骰子</button>
                 <button type="button" class="btn-set btn-set-action" onclick="toggleGlobalBeautify()">全局自美化</button>
+              </div>
+              <div class="set-ui-cell-notes-row">
+                <label class="modal-label">任务批注悬停</label>
+                <div class="set-ui-toggle-grid set-ui-toggle-grid-2">
+                  <button type="button" class="btn-set btn-set-action" id="btnCellNotesShow" onclick="setCellNotesVisible(1)">显示</button>
+                  <button type="button" class="btn-set btn-set-action" id="btnCellNotesHide" onclick="setCellNotesVisible(0)">隐藏</button>
+                </div>
+              </div>
+              <div class="set-field" style="margin-top:10px; max-width:320px">
+                <label class="modal-label" for="cellNoteHoverSec">任务批注悬停延迟（秒）</label>
+                <input type="number" class="modal-input wheel-adjust-num" id="cellNoteHoverSec" min="0.5" max="5" step="0.1" value="1">
               </div>
             </div>
           </div>
@@ -2502,8 +2795,9 @@ body.mode-zoom-right .cell-mark svg {
               <button type="button" class="cell-text-table-btn btn-save-table" onclick="saveCurrentTable()">保存当前表格</button>
               <button type="button" class="cell-text-table-btn btn-load-table" onclick="showLoadTableHistory()">读取历史表格</button>
             </div>
-            <div class="cell-text-form-title">单元格文案（每行一格，共 25 行）</div>
-            <button type="button" class="cell-text-adapt-btn" onclick="cellTextAutoAdapt()">自动换行适配</button>
+            <div class="cell-text-form-title" id="cellTextFormTitle">单元格文案（每行一格，共 25 行）</div>
+            <button type="button" class="cell-text-mode-toggle" id="cellTextModeToggle" onclick="toggleCellTextEditMode()">切换批注模式</button>
+            <button type="button" class="cell-text-adapt-btn" id="cellTextAdaptBtn" onclick="cellTextAutoAdapt()">自动换行适配</button>
           </div>
           <textarea class="cell-text-input-big" id="cellTextBigInput" placeholder="每行一条，对应一个单元格；自上而下、从左到右填充 25 格。不足补序号，超出部分忽略。"></textarea>
         </div>
@@ -2539,26 +2833,74 @@ body.mode-zoom-right .cell-mark svg {
         <div class="font-size-preview-name blue" id="fontPreviewBlueName">蓝方</div>
       </div>
       <div class="font-size-preview-cell" id="fontPreviewCell">表格正文预览</div>
+      <div class="font-size-preview-cell-note-wrap">
+        <div class="font-size-preview-cell-mini">示例任务格</div>
+        <div class="font-size-preview-note" id="fontPreviewCellNote">任务批注悬停预览</div>
+      </div>
       <div class="font-size-preview-memo" id="fontPreviewMemo">备注正文预览</div>
+      <div class="font-size-preview-timer" id="fontPreviewTimer">00:00:00</div>
     </div>
     <div class="set-grid-3" style="margin-bottom:12px">
       <div class="set-field">
         <label class="modal-label" for="fontSizeCell">表格正文字体大小</label>
-        <input type="number" class="modal-input" id="fontSizeCell" value="22" min="8" max="72" oninput="onFontSizeFormChange()">
+        <input type="number" class="modal-input wheel-adjust-num" id="fontSizeCell" value="22" min="8" max="72" oninput="onFontSizeFormChange()">
       </div>
       <div class="set-field">
         <label class="modal-label" for="fontSizeMemo">备注正文字体大小</label>
-        <input type="number" class="modal-input" id="fontSizeMemo" value="22" min="8" max="72" oninput="onFontSizeFormChange()">
+        <input type="number" class="modal-input wheel-adjust-num" id="fontSizeMemo" value="22" min="8" max="72" oninput="onFontSizeFormChange()">
       </div>
       <div class="set-field">
         <label class="modal-label" for="fontSizePlayerName">选手名字字体大小</label>
-        <input type="number" class="modal-input" id="fontSizePlayerName" value="20" min="8" max="48" oninput="onFontSizeFormChange()">
+        <input type="number" class="modal-input wheel-adjust-num" id="fontSizePlayerName" value="20" min="8" max="48" oninput="onFontSizeFormChange()">
+      </div>
+    </div>
+    <div class="set-grid-2" style="margin-bottom:12px">
+      <div class="set-field">
+        <label class="modal-label" for="fontSizeTimer">时钟区字体大小</label>
+        <input type="number" class="modal-input wheel-adjust-num" id="fontSizeTimer" value="28" min="10" max="72" oninput="onFontSizeFormChange()">
+      </div>
+      <div class="set-field">
+        <label class="modal-label" for="fontSizeCellNote">任务批注字体大小</label>
+        <input type="number" class="modal-input wheel-adjust-num" id="fontSizeCellNote" value="14" min="8" max="36" oninput="onFontSizeFormChange()">
       </div>
     </div>
     <div class="modal-buttons">
       <button type="button" class="modal-btn btn-confirm" onclick="saveFontSizeAndClose()">保存并关闭</button>
       <button type="button" class="modal-btn" style="background:#666" onclick="resetFontSizeDefaults()">恢复默认</button>
       <button type="button" class="modal-btn btn-cancel" onclick="hideFontSizeModal(true)">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- 延迟同步 -->
+<div id="delaySyncModal" class="modal-overlay modal-hide">
+  <div class="modal" style="max-width: 720px;">
+    <div class="modal-title">延迟同步</div>
+    <p class="beautify-bg-hint" style="margin-bottom:12px">拖动滑轨调整左右画面延迟，使两侧直播尽量同步。调整后放大画面仍保持设定延迟。</p>
+    <div class="delay-preview-row">
+      <div class="delay-preview-box">
+        <span class="delay-preview-label">左侧预览</span>
+        <video id="delayPreviewVideo1" autoplay muted playsinline></video>
+      </div>
+      <div class="delay-preview-box">
+        <span class="delay-preview-label">右侧预览</span>
+        <video id="delayPreviewVideo2" autoplay muted playsinline></video>
+      </div>
+    </div>
+    <div class="delay-slider-row">
+      <label for="delaySlider1">左侧延迟</label>
+      <input type="range" id="delaySlider1" min="0" max="15000" step="100" value="0" oninput="onDelaySliderInput(1)">
+      <span class="delay-slider-val" id="delaySliderVal1">0.0s</span>
+    </div>
+    <div class="delay-slider-row">
+      <label for="delaySlider2">右侧延迟</label>
+      <input type="range" id="delaySlider2" min="0" max="15000" step="100" value="0" oninput="onDelaySliderInput(2)">
+      <span class="delay-slider-val" id="delaySliderVal2">0.0s</span>
+    </div>
+    <div class="modal-buttons">
+      <button type="button" class="modal-btn btn-confirm" onclick="saveDelaySyncAndClose()">保存并关闭</button>
+      <button type="button" class="modal-btn" style="background:#666" onclick="resetDelaySync()">重置为 0</button>
+      <button type="button" class="modal-btn btn-cancel" onclick="hideDelaySyncModal(true)">取消</button>
     </div>
   </div>
 </div>
@@ -2588,7 +2930,6 @@ body.mode-zoom-right .cell-mark svg {
     <p class="crop-hint">拖框选保留区域</p>
     <div class="crop-stage" id="cropStage">
       <video class="crop-editor-video" id="cropEditorVideo" autoplay muted playsinline></video>
-      <video class="crop-editor-video hide" id="cropEditorVideo" autoplay muted playsinline></video>
       <div class="crop-interaction-layer" id="cropInteractionLayer">
         <div class="crop-edit-box" id="cropEditBox">
           <div class="crop-handle nw" data-dir="nw"></div>
@@ -2745,13 +3086,18 @@ const SETTINGS_DEFAULTS = {
   stretchSideGaps: 0,
   showBingoSettle: 1,
   showExtra: 1,
-  headerText: '',
-  showHeader: 0,
   showClock: 1,
+  showCellNotes: 1,
+  cellNoteHoverSec: 1,
+  cellNotesPreamble: '',
+  cellTextEditMode: 'text',
   cellFontSize: 22,
   memoFontSize: 22,
   playerNameFontSize: 20,
-  cellTexts: Array(25).fill('').map((_, i) => (i + 1).toString())
+  timerFontSize: 28,
+  cellNoteFontSize: 14,
+  cellTexts: Array(25).fill('').map((_, i) => (i + 1).toString()),
+  cellNotes: Array(25).fill('')
 };
 let settings = { ...SETTINGS_DEFAULTS };
 const SET_SECTION_COLLAPSE_KEY = 'bingotools_set_section_collapsed';
@@ -2789,6 +3135,45 @@ let beautifySavedSnapshot = null;
 let fontSizeSavedSnapshot = null;
 let beautifyBgReadSeq = 0;
 let beautifyBgReader = null;
+const BEAUTIFY_BG_DB = 'bingotools_store';
+const BEAUTIFY_BG_STORE = 'beautify';
+const BEAUTIFY_BG_KEY = 'bgImage';
+
+function openBeautifyBgDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(BEAUTIFY_BG_DB, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(BEAUTIFY_BG_STORE)) {
+        db.createObjectStore(BEAUTIFY_BG_STORE);
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function saveBeautifyBgToIDB(dataUrl) {
+  return openBeautifyBgDB().then((db) => new Promise((resolve, reject) => {
+    const tx = db.transaction(BEAUTIFY_BG_STORE, 'readwrite');
+    tx.objectStore(BEAUTIFY_BG_STORE).put(dataUrl || '', BEAUTIFY_BG_KEY);
+    tx.oncomplete = () => { db.close(); resolve(); };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+  }));
+}
+
+function loadBeautifyBgFromIDB() {
+  return openBeautifyBgDB().then((db) => new Promise((resolve, reject) => {
+    const tx = db.transaction(BEAUTIFY_BG_STORE, 'readonly');
+    const req = tx.objectStore(BEAUTIFY_BG_STORE).get(BEAUTIFY_BG_KEY);
+    req.onsuccess = () => { db.close(); resolve(req.result || ''); };
+    req.onerror = () => { db.close(); reject(req.error); };
+  })).catch(() => '');
+}
+
+function clearBeautifyBgFromIDB() {
+  return saveBeautifyBgToIDB('');
+}
 // 格子状态
 let first = Array(25).fill(null), red = Array(25).fill(false), blue = Array(25).fill(false);
 let redTime = Array(25).fill(0), blueTime = Array(25).fill(0);
@@ -2829,6 +3214,14 @@ let liveSources = { 1: createEmptyLiveSource(), 2: createEmptyLiveSource() };
 // P4: 网络流播放器实例与类型
 let liveStreamPlayers = { 1: null, 2: null };
 let liveStreamKinds = { 1: '', 2: '' };
+let cropEditorPlayer = null;
+let liveDelayMs = { 1: 0, 2: 0 };
+let liveMuted = { 1: true, 2: true };
+let liveDelayTicker = null;
+let delayPreviewPlayers = { 1: null, 2: null };
+let delaySyncSnapshot = null;
+let cellNoteHoverTimer = null;
+let cellNoteActiveCell = null;
 
 
 // ---------- P4 网络流播放工具 ----------
@@ -2920,6 +3313,8 @@ async function loadStream(side, source) {
       video.play().catch(() => {});
     }
     applyLiveCropToMain(side);
+    applyLiveMute(side);
+    startLiveDelayTicker();
   } catch (e) {
     console.error('ResolveLive error', e);
     setLiveTip(side, '取流失败', e && e.message ? e.message : '');
@@ -2940,6 +3335,227 @@ function refreshLive(side) {
   }
   loadStream(side, source);
   showToast((side === 1 ? '左' : '右') + '侧直播已刷新');
+}
+
+function getActiveLiveVideo(side) {
+  const local = document.getElementById('localVideo' + side);
+  if (local && !local.classList.contains('hide') && local.srcObject) return local;
+  return document.getElementById('liveVideo' + side);
+}
+
+function applyLiveMute(side) {
+  const muted = liveMuted[side] !== false;
+  const video = document.getElementById('liveVideo' + side);
+  const local = document.getElementById('localVideo' + side);
+  if (video) video.muted = muted;
+  if (local) local.muted = muted;
+  const btn = document.getElementById('liveMuteBtn' + side);
+  if (btn) {
+    btn.textContent = muted ? '静音' : '有声';
+    btn.classList.toggle('is-unmuted', !muted);
+  }
+}
+
+function toggleLiveMute(side) {
+  if (side !== 1 && side !== 2) return;
+  liveMuted[side] = liveMuted[side] === false;
+  applyLiveMute(side);
+  saveLiveMuted();
+  showToast((side === 1 ? '左' : '右') + '侧' + (liveMuted[side] ? '已静音' : '已开启声音'));
+}
+
+function saveLiveMuted() {
+  try {
+    localStorage.setItem('bingotools_live_muted', JSON.stringify(liveMuted));
+  } catch (e) {}
+}
+
+function loadLiveMuted() {
+  try {
+    const raw = localStorage.getItem('bingotools_live_muted');
+    if (!raw) return;
+    const o = JSON.parse(raw);
+    [1, 2].forEach((k) => {
+      if (typeof o[k] === 'boolean') liveMuted[k] = o[k];
+      else if (typeof o[String(k)] === 'boolean') liveMuted[k] = o[String(k)];
+    });
+  } catch (e) {}
+  [1, 2].forEach(applyLiveMute);
+}
+
+function saveLiveDelay() {
+  try {
+    localStorage.setItem('bingotools_live_delay', JSON.stringify(liveDelayMs));
+  } catch (e) {}
+}
+
+function loadLiveDelay() {
+  try {
+    const raw = localStorage.getItem('bingotools_live_delay');
+    if (!raw) return;
+    const o = JSON.parse(raw);
+    [1, 2].forEach((k) => {
+      const v = o[k] != null ? o[k] : o[String(k)];
+      if (Number.isFinite(Number(v))) liveDelayMs[k] = Math.max(0, Math.min(15000, Math.round(Number(v))));
+    });
+  } catch (e) {}
+}
+
+function applyLiveDelayToVideo(side) {
+  const video = getActiveLiveVideo(side);
+  if (!video) return;
+  const delaySec = (liveDelayMs[side] || 0) / 1000;
+  if (delaySec <= 0) return;
+  try {
+    if (video.buffered && video.buffered.length > 0) {
+      const end = video.buffered.end(video.buffered.length - 1);
+      const target = Math.max(0, end - delaySec);
+      if (Math.abs(video.currentTime - target) > 0.2) {
+        video.currentTime = target;
+      }
+    }
+  } catch (e) {}
+}
+
+function startLiveDelayTicker() {
+  if (liveDelayTicker) return;
+  liveDelayTicker = setInterval(() => {
+    [1, 2].forEach(applyLiveDelayToVideo);
+    [1, 2].forEach((side) => {
+      if (delayPreviewPlayers[side]) applyLiveDelayToVideoOnEl(document.getElementById('delayPreviewVideo' + side), side);
+    });
+  }, 400);
+}
+
+function applyLiveDelayToVideoOnEl(video, side) {
+  if (!video) return;
+  const delaySec = (liveDelayMs[side] || 0) / 1000;
+  if (delaySec <= 0) return;
+  try {
+    if (video.buffered && video.buffered.length > 0) {
+      const end = video.buffered.end(video.buffered.length - 1);
+      const target = Math.max(0, end - delaySec);
+      if (Math.abs(video.currentTime - target) > 0.2) {
+        video.currentTime = target;
+      }
+    }
+  } catch (e) {}
+}
+
+function stopDelayPreviewPlayers() {
+  [1, 2].forEach((side) => {
+    const player = delayPreviewPlayers[side];
+    if (player) {
+      try { player.destroy(); } catch (e) {}
+      delayPreviewPlayers[side] = null;
+    }
+    const video = document.getElementById('delayPreviewVideo' + side);
+    if (video) {
+      video.pause();
+      video.srcObject = null;
+      video.removeAttribute('src');
+      video.src = '';
+      video.load();
+    }
+  });
+}
+
+function startDelayPreview(side) {
+  const video = document.getElementById('delayPreviewVideo' + side);
+  if (!video) return;
+  const old = delayPreviewPlayers[side];
+  if (old) { try { old.destroy(); } catch (e) {} delayPreviewPlayers[side] = null; }
+
+  if (isSideUsingLocalVideo(side)) {
+    const srcVideo = document.getElementById('localVideo' + side);
+    video.srcObject = srcVideo && srcVideo.srcObject ? srcVideo.srcObject : null;
+    video.play().catch(() => {});
+    return;
+  }
+
+  const kind = liveStreamKinds[side];
+  const streamUrl = '/live/stream/' + side;
+  if (!kind) return;
+
+  if (kind === 'flv' && typeof flvjs !== 'undefined' && flvjs.isSupported()) {
+    const player = flvjs.createPlayer({
+      type: 'flv',
+      url: streamUrl,
+      isLive: true,
+      hasAudio: false,
+      hasVideo: true,
+      cors: false
+    });
+    delayPreviewPlayers[side] = player;
+    player.attachMediaElement(video);
+    player.load();
+    player.play();
+  } else if (kind === 'hls' && typeof Hls !== 'undefined' && Hls.isSupported()) {
+    const player = new Hls({ enableWorker: true, liveSyncDurationCount: 3 });
+    delayPreviewPlayers[side] = player;
+    player.loadSource(streamUrl);
+    player.attachMedia(video);
+    player.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => {}); });
+  } else {
+    video.src = streamUrl;
+    video.play().catch(() => {});
+  }
+}
+
+function syncDelaySliderUI() {
+  [1, 2].forEach((side) => {
+    const slider = document.getElementById('delaySlider' + side);
+    const label = document.getElementById('delaySliderVal' + side);
+    const ms = liveDelayMs[side] || 0;
+    if (slider) slider.value = String(ms);
+    if (label) label.textContent = (ms / 1000).toFixed(1) + 's';
+  });
+}
+
+function onDelaySliderInput(side) {
+  const slider = document.getElementById('delaySlider' + side);
+  const label = document.getElementById('delaySliderVal' + side);
+  if (!slider) return;
+  const ms = Math.max(0, Math.min(15000, parseInt(slider.value, 10) || 0));
+  liveDelayMs[side] = ms;
+  if (label) label.textContent = (ms / 1000).toFixed(1) + 's';
+  applyLiveDelayToVideo(side);
+  applyLiveDelayToVideoOnEl(document.getElementById('delayPreviewVideo' + side), side);
+}
+
+function showDelaySyncModal() {
+  delaySyncSnapshot = { ...liveDelayMs };
+  syncDelaySliderUI();
+  stopDelayPreviewPlayers();
+  [1, 2].forEach(startDelayPreview);
+  startLiveDelayTicker();
+  document.getElementById('delaySyncModal').classList.remove('modal-hide');
+}
+
+function hideDelaySyncModal(revert) {
+  if (revert && delaySyncSnapshot) {
+    liveDelayMs = { ...delaySyncSnapshot };
+    [1, 2].forEach(applyLiveDelayToVideo);
+  }
+  stopDelayPreviewPlayers();
+  document.getElementById('delaySyncModal').classList.add('modal-hide');
+  delaySyncSnapshot = null;
+}
+
+function saveDelaySyncAndClose() {
+  saveLiveDelay();
+  delaySyncSnapshot = { ...liveDelayMs };
+  stopDelayPreviewPlayers();
+  document.getElementById('delaySyncModal').classList.add('modal-hide');
+  showToast('延迟同步已保存');
+}
+
+function resetDelaySync() {
+  liveDelayMs = { 1: 0, 2: 0 };
+  syncDelaySliderUI();
+  [1, 2].forEach(applyLiveDelayToVideo);
+  [1, 2].forEach((side) => applyLiveDelayToVideoOnEl(document.getElementById('delayPreviewVideo' + side), side));
+  showToast('两侧延迟已重置为 0');
 }
 
 function bilibiliLiveEmbedUrl(roomId) {
@@ -3117,13 +3733,66 @@ function restoreLiveFramesFromSaved() {
 }
 
 function resetCropEditorPreview() {
+  if (cropEditorPlayer) {
+    try { cropEditorPlayer.destroy(); } catch (e) {}
+    cropEditorPlayer = null;
+  }
   const edVideo = document.getElementById('cropEditorVideo');
   if (edVideo) {
     edVideo.pause();
     edVideo.srcObject = null;
     edVideo.removeAttribute('src');
     edVideo.src = '';
+    edVideo.load();
     edVideo.classList.add('hide');
+  }
+}
+
+function startCropEditorPreview(side) {
+  const edVideo = document.getElementById('cropEditorVideo');
+  if (!edVideo) return;
+  resetCropEditorPreview();
+  edVideo.classList.remove('hide');
+
+  if (isSideUsingLocalVideo(side)) {
+    const srcVideo = document.getElementById('localVideo' + side);
+    edVideo.srcObject = srcVideo && srcVideo.srcObject ? srcVideo.srcObject : null;
+    edVideo.play().catch(() => {});
+    return;
+  }
+
+  const kind = liveStreamKinds[side];
+  const streamUrl = '/live/stream/' + side;
+  if (kind === 'flv' && typeof flvjs !== 'undefined' && flvjs.isSupported()) {
+    const player = flvjs.createPlayer({
+      type: 'flv',
+      url: streamUrl,
+      isLive: true,
+      hasAudio: false,
+      hasVideo: true,
+      cors: false
+    });
+    cropEditorPlayer = player;
+    player.attachMediaElement(edVideo);
+    player.load();
+    player.play();
+  } else if (kind === 'hls') {
+    if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+      const player = new Hls({ enableWorker: true, liveSyncDurationCount: 3 });
+      cropEditorPlayer = player;
+      player.loadSource(streamUrl);
+      player.attachMedia(edVideo);
+      player.on(Hls.Events.MANIFEST_PARSED, () => { edVideo.play().catch(() => {}); });
+      player.on(Hls.Events.ERROR, (e, d) => {
+        if (d.fatal) console.error('Crop HLS fatal error', d);
+      });
+    } else if (edVideo.canPlayType('application/vnd.apple.mpegurl')) {
+      edVideo.src = streamUrl;
+      edVideo.play().catch(() => {});
+    }
+  } else {
+    edVideo.src = streamUrl;
+    edVideo.play().catch(() => {});
   }
 }
 
@@ -3317,8 +3986,6 @@ function openLiveCropFromSet(side) {
   const setModal = document.getElementById('setModal');
   const cropModal = document.getElementById('liveCropModal');
   const titleEl = document.getElementById('liveCropModalTitle');
-  const ed = document.getElementById('cropEditorFrame');
-  const edVideo = document.getElementById('cropEditorVideo');
   if (!cropModal || !titleEl) {
     showToast('裁切界面未加载，请刷新页面后重试');
     return;
@@ -3326,15 +3993,7 @@ function openLiveCropFromSet(side) {
   try {
     if (setModal) setModal.classList.add('modal-hide');
     titleEl.innerText = n === 1 ? '裁切左侧画面' : '裁切右侧画面';
-    if (localActive && edVideo) {
-      const srcVideo = document.getElementById('localVideo' + n);
-      edVideo.srcObject = srcVideo && srcVideo.srcObject ? srcVideo.srcObject : null;
-      edVideo.classList.remove('hide');
-    } else if (edVideo) {
-      resetCropEditorPreview();
-      edVideo.classList.remove('hide');
-      edVideo.src = embedUrl || '/live/stream/' + n;
-    }
+    startCropEditorPreview(n);
     setCropEditBoxFromRect({ ...liveCrop[n] });
     cropModal.classList.remove('modal-hide');
   } catch (e) {
@@ -3364,6 +4023,38 @@ function confirmLiveCrop() {
 function isZoomLiveMode() {
   return document.body.classList.contains('mode-zoom-left') ||
     document.body.classList.contains('mode-zoom-right');
+}
+
+function isTableFocusMode() {
+  return document.body.classList.contains('mode-table-focus');
+}
+
+function isBoardLockedMode() {
+  return isZoomLiveMode() || isTableFocusMode();
+}
+
+function enterTableFocusMode() {
+  if (isTableFocusMode()) return;
+  if (isZoomLiveMode()) exitZoomLive();
+  closeCellPop();
+  closeMarkPop();
+  hideCellNoteTooltip();
+  document.body.classList.add('mode-table-focus');
+  const btn = document.getElementById('tableFocusRestoreBtn');
+  if (btn) btn.classList.remove('hide');
+  applyCellNotesDisplay();
+  if (typeof adjustCellFontSize === 'function') adjustCellFontSize();
+  showToast('已进入表格展示模式');
+}
+
+function exitTableFocusMode() {
+  if (!isTableFocusMode()) return;
+  document.body.classList.remove('mode-table-focus');
+  const btn = document.getElementById('tableFocusRestoreBtn');
+  if (btn) btn.classList.add('hide');
+  applyCellNotesDisplay();
+  if (typeof adjustCellFontSize === 'function') adjustCellFontSize();
+  showToast('已退出表格展示模式');
 }
 
 function loadZoomMiniSource() {
@@ -3404,6 +4095,7 @@ function setZoomMiniSource(source) {
 // 放大一侧直播
 function enterZoomLive(side) {
   if (side !== 1 && side !== 2) return;
+  if (isTableFocusMode()) exitTableFocusMode();
   document.body.classList.remove('mode-zoom-left', 'mode-zoom-right');
   document.body.classList.add(side === 1 ? 'mode-zoom-left' : 'mode-zoom-right');
   const zbtn = document.getElementById('zoomRestoreBtn');
@@ -3439,6 +4131,7 @@ window.onload = function() {
   loadSettings();
   loadBeautify();
   applyBeautify();
+  loadBeautifyBgAsync();
   loadGameState();
   renderCellTextForm();
   render();
@@ -3460,13 +4153,18 @@ window.onload = function() {
   applyTheoryMaxVisibility();
   applyTimerVisibility();
   applyDiceVisibility();
+  syncCellNotesToggleUI();
+  applyCellNotesDisplay();
   applyMemoVisibility();
   applySideLayout();
   applyScorePanelLayout();
   loadBtnsCollapsed();
   applyBtnsFold();
   loadSetSectionCollapseState();
-  applyHeaderVisibility();
+  loadLiveDelay();
+  loadLiveMuted();
+  startLiveDelayTicker();
+  initNumericWheelAdjust();
   applyContentFontSizes();
   startClockTicker();
   syncZoomTimerDisplays();
@@ -3743,20 +4441,195 @@ function applyTimerAreaLayout() {
   timerEl.classList.toggle('timer-area-only-clock', showClock && !showTimer);
 }
 
-function applyHeaderVisibility() {
-  const banner = document.getElementById('pageHeaderBanner');
-  const textEl = document.getElementById('pageHeaderBannerText');
-  if (!banner || !textEl) return;
-  const text = typeof settings.headerText === 'string' ? settings.headerText.trim() : '';
-  textEl.textContent = text;
-  banner.classList.toggle('is-hidden', settings.showHeader === 0 || !text);
+function syncCellNotesToggleUI() {
+  const showBtn = document.getElementById('btnCellNotesShow');
+  const hideBtn = document.getElementById('btnCellNotesHide');
+  const on = settings.showCellNotes !== 0;
+  if (showBtn) showBtn.classList.toggle('is-selected', on);
+  if (hideBtn) hideBtn.classList.toggle('is-selected', !on);
 }
 
-function toggleHeader() {
-  settings.showHeader = settings.showHeader ? 0 : 1;
+function setCellNotesVisible(visible) {
+  const next = visible ? 1 : 0;
+  if (settings.showCellNotes === next) {
+    syncCellNotesToggleUI();
+    return;
+  }
+  settings.showCellNotes = next;
   saveSettingsToLocal();
-  applyHeaderVisibility();
-  showToast(settings.showHeader ? '表头已显示' : '表头已隐藏');
+  syncCellNotesToggleUI();
+  showToast(next ? '任务批注悬停已显示' : '任务批注悬停已隐藏');
+  applyCellNotesDisplay();
+}
+
+function applyCellNotesDisplay() {
+  document.body.classList.toggle('show-cell-notes', settings.showCellNotes !== 0);
+  const bar = document.getElementById('cellNotesPreambleBar');
+  if (!bar) return;
+  const show = isTableFocusMode() && settings.showCellNotes !== 0;
+  const pre = (settings.cellNotesPreamble || '').trim();
+  if (show && pre) {
+    bar.textContent = pre;
+    bar.classList.remove('hide');
+    bar.classList.add('is-visible');
+  } else {
+    bar.textContent = '';
+    bar.classList.add('hide');
+    bar.classList.remove('is-visible');
+  }
+}
+
+function getCellNoteText(idx) {
+  const notes = Array.isArray(settings.cellNotes) ? settings.cellNotes : [];
+  return (notes[idx] || '').trim();
+}
+
+function toggleCellTextEditMode() {
+  const ta = document.getElementById('cellTextBigInput');
+  if (!ta) return;
+  if (settings.cellTextEditMode !== 'note') {
+    settings.cellTexts = parseCellTextsFromInput(ta.value);
+    settings.cellTextEditMode = 'note';
+  } else {
+    const bundle = parseCellNotesBundle(ta.value);
+    settings.cellNotes = bundle.notes;
+    settings.cellNotesPreamble = bundle.preamble;
+    settings.cellTextEditMode = 'text';
+  }
+  renderCellTextForm();
+  showToast(settings.cellTextEditMode === 'note' ? '已切换为批注模式' : '已切换为文字模式');
+}
+
+function getCellCoordLabel(idx) {
+  const row = Math.floor(idx / 5) + 1;
+  const col = (idx % 5) + 1;
+  return row + '-' + col;
+}
+
+function parseCellTextsFromInput(val) {
+  const lines = String(val || '').split('\n').map((item) => item.trim());
+  const result = Array(25).fill('');
+  for (let i = 0; i < 25; i++) {
+    result[i] = lines[i] ? lines[i] : (i + 1).toString();
+  }
+  return result;
+}
+
+function parseCellNotesBundle(val) {
+  const lines = String(val || '').split('\n');
+  const notes = Array(25).fill('');
+  const preamble = [];
+  let foundCoord = false;
+  let lastIdx = -1;
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    const parsed = parseNoteCoordLine(line);
+    if (parsed) {
+      foundCoord = true;
+      lastIdx = parsed.idx;
+      notes[parsed.idx] = notes[parsed.idx]
+        ? (notes[parsed.idx] + ' ' + parsed.text).trim()
+        : parsed.text;
+      continue;
+    }
+    if (!foundCoord) {
+      preamble.push(line);
+      continue;
+    }
+    if (lastIdx >= 0) {
+      notes[lastIdx] = (notes[lastIdx] + ' ' + line).trim();
+    }
+  }
+
+  if (!foundCoord) {
+    const nonEmpty = lines.map((l) => l.trim()).filter(Boolean);
+    for (let i = 0; i < 25 && i < nonEmpty.length; i++) {
+      const parsed = parseNoteCoordLine(nonEmpty[i]);
+      notes[i] = parsed
+        ? parsed.text
+        : nonEmpty[i].replace(/^\d+-\d+\s*[:：]\s*/, '').trim();
+    }
+  }
+
+  return {
+    preamble: preamble.join('\n'),
+    notes
+  };
+}
+
+function parseCellNotesFromInput(val) {
+  return parseCellNotesBundle(val).notes;
+}
+
+function positionCellNoteTooltip(cellEl, tip) {
+  const margin = 10;
+  const rect = cellEl.getBoundingClientRect();
+  const tipRect = tip.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let left = rect.right + margin;
+  let top = rect.top + Math.max(0, (rect.height - tipRect.height) / 2);
+
+  if (left + tipRect.width > vw - margin) {
+    left = rect.left - tipRect.width - margin;
+  }
+  if (left < margin) {
+    left = Math.max(margin, Math.min(rect.left, vw - tipRect.width - margin));
+    top = rect.bottom + margin;
+  }
+  if (top + tipRect.height > vh - margin) {
+    top = Math.max(margin, rect.top - tipRect.height - margin);
+  }
+  if (top < margin) top = margin;
+
+  tip.style.left = left + 'px';
+  tip.style.top = top + 'px';
+}
+
+function showCellNoteTooltip(cellEl, text) {
+  const tip = document.getElementById('cellNoteTooltip');
+  if (!tip || settings.showCellNotes === 0) return;
+  if (cellNoteActiveCell && cellNoteActiveCell !== cellEl) {
+    cellNoteActiveCell.classList.remove('cell-note-active');
+  }
+  tip.textContent = text;
+  tip.classList.remove('hide');
+  tip.style.visibility = 'hidden';
+  tip.style.left = '-9999px';
+  tip.style.top = '0';
+  positionCellNoteTooltip(cellEl, tip);
+  tip.style.visibility = 'visible';
+  cellEl.classList.add('cell-note-active');
+  cellNoteActiveCell = cellEl;
+}
+
+function hideCellNoteTooltip() {
+  const tip = document.getElementById('cellNoteTooltip');
+  if (tip) {
+    tip.classList.add('hide');
+    tip.style.visibility = '';
+  }
+  if (cellNoteActiveCell) {
+    cellNoteActiveCell.classList.remove('cell-note-active');
+    cellNoteActiveCell = null;
+  }
+}
+
+function bindCellNoteHover(cellEl, idx) {
+  cellEl.addEventListener('mouseenter', () => {
+    if (settings.showCellNotes === 0) return;
+    const note = getCellNoteText(idx);
+    if (!note) return;
+    if (isTableFocusMode()) return;
+    clearTimeout(cellNoteHoverTimer);
+    cellNoteHoverTimer = setTimeout(() => showCellNoteTooltip(cellEl, note), getCellNoteHoverDelayMs());
+  });
+  cellEl.addEventListener('mouseleave', () => {
+    clearTimeout(cellNoteHoverTimer);
+    hideCellNoteTooltip();
+  });
 }
 
 function getCellFontSizeVal() {
@@ -3771,11 +4644,31 @@ function getPlayerNameFontSizeVal() {
   return clampSettingInt(settings.playerNameFontSize, 8, 48, SETTINGS_DEFAULTS.playerNameFontSize);
 }
 
+function getTimerFontSizeVal() {
+  return clampSettingInt(settings.timerFontSize, 10, 72, SETTINGS_DEFAULTS.timerFontSize);
+}
+
+function getCellNoteFontSizeVal() {
+  return clampSettingInt(settings.cellNoteFontSize, 8, 36, SETTINGS_DEFAULTS.cellNoteFontSize);
+}
+
+function getCellNoteHoverSecVal() {
+  const n = parseFloat(settings.cellNoteHoverSec);
+  if (!Number.isFinite(n)) return SETTINGS_DEFAULTS.cellNoteHoverSec;
+  return Math.max(0.5, Math.min(5, Math.round(n * 10) / 10));
+}
+
+function getCellNoteHoverDelayMs() {
+  return Math.round(getCellNoteHoverSecVal() * 1000);
+}
+
 function applyContentFontSizes() {
   const root = document.documentElement;
   root.style.setProperty('--cell-font-size', getCellFontSizeVal() + 'px');
   root.style.setProperty('--memo-font-size', getMemoFontSizeVal() + 'px');
   root.style.setProperty('--player-name-font-size', getPlayerNameFontSizeVal() + 'px');
+  root.style.setProperty('--timer-font-size', getTimerFontSizeVal() + 'px');
+  root.style.setProperty('--cell-note-font-size', getCellNoteFontSizeVal() + 'px');
   if (typeof adjustCellFontSize === 'function') adjustCellFontSize();
 }
 
@@ -3999,12 +4892,44 @@ function loadBeautify() {
   normalizeBeautify();
 }
 
+function loadBeautifyBgAsync() {
+  return loadBeautifyBgFromIDB().then((bgFromIdb) => {
+    if (bgFromIdb) {
+      beautify.bgImage = bgFromIdb;
+      applyBeautify();
+      return;
+    }
+    const raw = localStorage.getItem('bingotools_beautify');
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      if (typeof parsed.bgImage === 'string' && parsed.bgImage) {
+        beautify.bgImage = parsed.bgImage;
+        applyBeautify();
+        saveBeautifyBgToIDB(parsed.bgImage).catch(() => {});
+        try {
+          const rest = { ...parsed };
+          delete rest.bgImage;
+          rest.hasBgImage = true;
+          localStorage.setItem('bingotools_beautify', JSON.stringify(rest));
+        } catch (e) {}
+      }
+    } catch (e) {}
+  });
+}
+
 function saveBeautifyToLocal() {
+  const bgImage = beautify.bgImage;
   try {
-    localStorage.setItem('bingotools_beautify', JSON.stringify(beautify));
+    const payload = { ...beautify, bgImage: '', hasBgImage: !!bgImage };
+    localStorage.setItem('bingotools_beautify', JSON.stringify(payload));
   } catch (e) {
-    showToast('美化设置保存失败，背景图可能过大');
+    showToast('美化设置保存失败');
+    return;
   }
+  saveBeautifyBgToIDB(bgImage).catch(() => {
+    showToast('背景图保存失败，PNG 过大时请换较小图片或 JPG');
+  });
 }
 
 function applyBeautify() {
@@ -4184,6 +5109,7 @@ function clearBeautifyBg() {
     try { beautifyBgReader.abort(); } catch (e) {}
   }
   beautify.bgImage = '';
+  clearBeautifyBgFromIDB().catch(() => {});
   const clearBtn = document.getElementById('beautifyBgClearBtn');
   if (clearBtn) clearBtn.disabled = true;
   onBeautifyFormChange();
@@ -4238,25 +5164,44 @@ function readFontSizeFromForm() {
   const cellInput = document.getElementById('fontSizeCell');
   const memoInput = document.getElementById('fontSizeMemo');
   const nameInput = document.getElementById('fontSizePlayerName');
+  const timerInput = document.getElementById('fontSizeTimer');
+  const noteInput = document.getElementById('fontSizeCellNote');
   if (cellInput) settings.cellFontSize = clampSettingInt(cellInput.value, 8, 72, SETTINGS_DEFAULTS.cellFontSize);
   if (memoInput) settings.memoFontSize = clampSettingInt(memoInput.value, 8, 72, SETTINGS_DEFAULTS.memoFontSize);
   if (nameInput) settings.playerNameFontSize = clampSettingInt(nameInput.value, 8, 48, SETTINGS_DEFAULTS.playerNameFontSize);
+  if (timerInput) settings.timerFontSize = clampSettingInt(timerInput.value, 10, 72, SETTINGS_DEFAULTS.timerFontSize);
+  if (noteInput) settings.cellNoteFontSize = clampSettingInt(noteInput.value, 8, 36, SETTINGS_DEFAULTS.cellNoteFontSize);
 }
 
 function syncFontSizeForm() {
   const cellInput = document.getElementById('fontSizeCell');
   const memoInput = document.getElementById('fontSizeMemo');
   const nameInput = document.getElementById('fontSizePlayerName');
+  const timerInput = document.getElementById('fontSizeTimer');
+  const noteInput = document.getElementById('fontSizeCellNote');
   if (cellInput) cellInput.value = getCellFontSizeVal();
   if (memoInput) memoInput.value = getMemoFontSizeVal();
   if (nameInput) nameInput.value = getPlayerNameFontSizeVal();
+  if (timerInput) timerInput.value = getTimerFontSizeVal();
+  if (noteInput) noteInput.value = getCellNoteFontSizeVal();
+}
+
+function getCellNotePreviewSample() {
+  const notes = Array.isArray(settings.cellNotes) ? settings.cellNotes : [];
+  for (let i = 0; i < notes.length; i++) {
+    const t = (notes[i] || '').trim();
+    if (t) return t;
+  }
+  return '焰型大剑，灭洛斯剑，大蜥蜴大剑（概率掉落），分岔大剑（概率掉落）';
 }
 
 function updateFontSizePreview() {
   const redPrev = document.getElementById('fontPreviewRedName');
   const bluePrev = document.getElementById('fontPreviewBlueName');
   const cellPrev = document.getElementById('fontPreviewCell');
+  const notePrev = document.getElementById('fontPreviewCellNote');
   const memoPrev = document.getElementById('fontPreviewMemo');
+  const timerPrev = document.getElementById('fontPreviewTimer');
   if (redPrev) {
     redPrev.textContent = settings.redTeamName || '红方';
     redPrev.style.fontSize = getPlayerNameFontSizeVal() + 'px';
@@ -4266,7 +5211,12 @@ function updateFontSizePreview() {
     bluePrev.style.fontSize = getPlayerNameFontSizeVal() + 'px';
   }
   if (cellPrev) cellPrev.style.fontSize = getCellFontSizeVal() + 'px';
+  if (notePrev) {
+    notePrev.textContent = getCellNotePreviewSample();
+    notePrev.style.fontSize = getCellNoteFontSizeVal() + 'px';
+  }
   if (memoPrev) memoPrev.style.fontSize = getMemoFontSizeVal() + 'px';
+  if (timerPrev) timerPrev.style.fontSize = getTimerFontSizeVal() + 'px';
 }
 
 function onFontSizeFormChange() {
@@ -4279,7 +5229,9 @@ function showFontSizeModal() {
   fontSizeSavedSnapshot = {
     cellFontSize: getCellFontSizeVal(),
     memoFontSize: getMemoFontSizeVal(),
-    playerNameFontSize: getPlayerNameFontSizeVal()
+    playerNameFontSize: getPlayerNameFontSizeVal(),
+    timerFontSize: getTimerFontSizeVal(),
+    cellNoteFontSize: getCellNoteFontSizeVal()
   };
   syncFontSizeForm();
   applyContentFontSizes();
@@ -4292,6 +5244,8 @@ function hideFontSizeModal(revert) {
     settings.cellFontSize = fontSizeSavedSnapshot.cellFontSize;
     settings.memoFontSize = fontSizeSavedSnapshot.memoFontSize;
     settings.playerNameFontSize = fontSizeSavedSnapshot.playerNameFontSize;
+    settings.timerFontSize = fontSizeSavedSnapshot.timerFontSize;
+    settings.cellNoteFontSize = fontSizeSavedSnapshot.cellNoteFontSize;
     applyContentFontSizes();
   }
   document.getElementById('fontSizeModal').classList.add('modal-hide');
@@ -4310,9 +5264,17 @@ function resetFontSizeDefaults() {
   settings.cellFontSize = SETTINGS_DEFAULTS.cellFontSize;
   settings.memoFontSize = SETTINGS_DEFAULTS.memoFontSize;
   settings.playerNameFontSize = SETTINGS_DEFAULTS.playerNameFontSize;
+  settings.timerFontSize = SETTINGS_DEFAULTS.timerFontSize;
+  settings.cellNoteFontSize = SETTINGS_DEFAULTS.cellNoteFontSize;
   syncFontSizeForm();
   onFontSizeFormChange();
   showToast('已恢复默认字体大小');
+}
+
+function clampSettingFloat(raw, min, max, fallback) {
+  const n = parseFloat(raw);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, Math.round(n * 10) / 10));
 }
 
 function clampSettingInt(raw, min, max, fallback) {
@@ -4336,12 +5298,21 @@ function normalizeSettings() {
   } else {
     settings.rowScores = settings.rowScores.map(s => clampSettingInt(s, 0, 99, 1));
   }
-  settings.headerText = typeof settings.headerText === 'string' ? settings.headerText : '';
-  settings.showHeader = settings.showHeader === 0 ? 0 : 1;
   settings.showClock = settings.showClock === 0 ? 0 : 1;
+  settings.showCellNotes = settings.showCellNotes === 0 ? 0 : 1;
+  settings.cellNoteHoverSec = getCellNoteHoverSecVal();
+  settings.cellNotesPreamble = typeof settings.cellNotesPreamble === 'string' ? settings.cellNotesPreamble : '';
+  settings.cellTextEditMode = settings.cellTextEditMode === 'note' ? 'note' : 'text';
   settings.cellFontSize = clampSettingInt(settings.cellFontSize, 8, 72, SETTINGS_DEFAULTS.cellFontSize);
   settings.memoFontSize = clampSettingInt(settings.memoFontSize, 8, 72, SETTINGS_DEFAULTS.memoFontSize);
   settings.playerNameFontSize = clampSettingInt(settings.playerNameFontSize, 8, 48, SETTINGS_DEFAULTS.playerNameFontSize);
+  settings.timerFontSize = clampSettingInt(settings.timerFontSize, 10, 72, SETTINGS_DEFAULTS.timerFontSize);
+  settings.cellNoteFontSize = clampSettingInt(settings.cellNoteFontSize, 8, 36, SETTINGS_DEFAULTS.cellNoteFontSize);
+  if (!Array.isArray(settings.cellNotes) || settings.cellNotes.length !== 25) {
+    settings.cellNotes = Array(25).fill('');
+  } else {
+    settings.cellNotes = settings.cellNotes.map((n) => (typeof n === 'string' ? n : ''));
+  }
 }
 
 function getMaxTasksPerLineVal() {
@@ -4575,15 +5546,123 @@ function applyRowScorePreset(key) {
 
 // 填格子文案
 function renderCellTextForm() {
-  const form = document.getElementById('cellTextForm');
   const bigInput = document.getElementById('cellTextBigInput');
+  const titleEl = document.getElementById('cellTextFormTitle');
+  const toggleBtn = document.getElementById('cellTextModeToggle');
+  const adaptBtn = document.getElementById('cellTextAdaptBtn');
+  const notes = Array.isArray(settings.cellNotes) ? settings.cellNotes : Array(25).fill('');
+  if (settings.cellTextEditMode !== 'note') settings.cellTextEditMode = 'text';
   if (bigInput) {
-    bigInput.value = settings.cellTexts.join('\n');
+    if (settings.cellTextEditMode === 'note') {
+      const preLines = (settings.cellNotesPreamble || '').split('\n').filter((line) => line.trim());
+      bigInput.value = formatCellNotesForInput(notes, preLines);
+      bigInput.placeholder = '顶部可写通用说明（如 备注：…），下方用 行-列: 批注内容，如 2-2: 说明文字';
+    } else {
+      bigInput.value = settings.cellTexts.join('\n');
+      bigInput.placeholder = '每行一条，对应一个单元格；自上而下、从左到右填充 25 格。不足补序号，超出部分忽略。';
+    }
   }
+  if (titleEl) {
+    titleEl.textContent = settings.cellTextEditMode === 'note'
+      ? '任务批注（顶部通用说明 + 行-列坐标批注）'
+      : '单元格文案（每行一格，共 25 行）';
+  }
+  if (toggleBtn) {
+    toggleBtn.textContent = settings.cellTextEditMode === 'note' ? '切换文字模式' : '切换批注模式';
+    toggleBtn.classList.toggle('is-note-mode', settings.cellTextEditMode === 'note');
+  }
+  if (adaptBtn) adaptBtn.style.display = '';
+  if (adaptBtn) adaptBtn.textContent = settings.cellTextEditMode === 'note' ? '自动识别换行' : '自动换行适配';
+}
+
+function parseNoteCoordLine(line) {
+  const m = String(line || '').trim().match(/^(\d+)\s*[-–—]\s*(\d+)\s*[:：]\s*(.*)$/);
+  if (!m) return null;
+  const row = parseInt(m[1], 10);
+  const col = parseInt(m[2], 10);
+  if (row < 1 || row > 5 || col < 1 || col > 5) return null;
+  return { row, col, idx: (row - 1) * 5 + (col - 1), text: m[3].trim() };
+}
+
+function formatCellNotesForInput(notes, preambleLines) {
+  const rows = [];
+  if (Array.isArray(preambleLines) && preambleLines.length) {
+    preambleLines.forEach((line) => {
+      const t = String(line || '').trim();
+      if (t) rows.push(t);
+    });
+  }
+  const list = Array.isArray(notes) ? notes : Array(25).fill('');
+  for (let i = 0; i < 25; i++) {
+    rows.push(getCellCoordLabel(i) + ': ' + (list[i] || ''));
+  }
+  return rows.join('\n');
+}
+
+function cellNoteAutoAdapt() {
+  const ta = document.getElementById('cellTextBigInput');
+  if (!ta) return;
+  const s = ta.value.replace(/\r\n/g, '\n').trim();
+  if (!s) {
+    showToast('内容为空');
+    return;
+  }
+
+  const notes = Array(25).fill('');
+  const preamble = [];
+  const rawLines = s.split('\n');
+  const blocks = [];
+  let block = null;
+
+  for (const raw of rawLines) {
+    const line = raw.trim();
+    if (!line) continue;
+    const parsed = parseNoteCoordLine(line);
+    if (parsed) {
+      if (block) blocks.push(block);
+      block = { idx: parsed.idx, parts: [parsed.text] };
+      continue;
+    }
+    if (block) {
+      block.parts.push(line);
+    } else {
+      preamble.push(line);
+    }
+  }
+  if (block) blocks.push(block);
+
+  blocks.forEach(({ idx, parts }) => {
+    const text = parts.filter(Boolean).join(' ').trim();
+    if (!text) return;
+    notes[idx] = notes[idx] ? (notes[idx] + ' ' + text) : text;
+  });
+
+  if (blocks.length === 0) {
+    let parts = s.split(/(?:[\n\r]+|\t|\s{2,})+/).map((p) => p.trim()).filter(Boolean);
+    if (parts.length <= 1) {
+      parts = rawLines.map((p) => p.trim()).filter(Boolean);
+    }
+    for (let i = 0; i < 25 && i < parts.length; i++) {
+      const parsed = parseNoteCoordLine(parts[i]);
+      notes[i] = parsed ? parsed.text : parts[i].replace(/^\d+-\d+\s*[:：]\s*/, '').trim();
+    }
+  }
+
+  if (preamble.length) {
+    settings.cellNotesPreamble = preamble.join('\n');
+  }
+
+  ta.value = formatCellNotesForInput(notes, preamble);
+  const filled = notes.filter((n) => n && n.trim()).length;
+  showToast(`已识别批注，${filled} 格有内容${preamble.length ? '，顶部说明已保留' : ''}`);
 }
 
 // 整理文案换行
 function cellTextAutoAdapt() {
+  if (settings.cellTextEditMode === 'note') {
+    cellNoteAutoAdapt();
+    return;
+  }
   const ta = document.getElementById('cellTextBigInput');
   if (!ta) return;
   let s = ta.value.replace(/\r\n/g, '\n').trim();
@@ -4825,7 +5904,7 @@ function renderMarkPopOptions() {
 }
 
 function showMarkPop(ev) {
-  if (isZoomLiveMode() || curr < 0) return;
+  if (isBoardLockedMode() || curr < 0) return;
   renderMarkPopOptions();
   const pop = document.getElementById('markPop');
   if (!pop) return;
@@ -4896,9 +5975,17 @@ function render() {
     cell.appendChild(textContainer);
     const marksWrap = createCellMarksWrap(idx);
     if (marksWrap) cell.appendChild(marksWrap);
-    cell.onclick = (ev) => { if (isZoomLiveMode()) return; closeMarkPop(); curr=idx; showCellPop(ev); };
+    const noteText = getCellNoteText(idx);
+    if (noteText) {
+      cell.classList.add('has-cell-note');
+      const noteEl = document.createElement('div');
+      noteEl.className = 'cell-inline-note';
+      noteEl.textContent = noteText;
+      cell.appendChild(noteEl);
+    }
+    cell.onclick = (ev) => { if (isBoardLockedMode()) return; closeMarkPop(); curr=idx; showCellPop(ev); };
     cell.oncontextmenu = (ev) => {
-      if (isZoomLiveMode()) return;
+      if (isBoardLockedMode()) return;
       ev.preventDefault();
       closeCellPop();
       curr = idx;
@@ -4916,11 +6003,13 @@ function render() {
     } else if(blue[idx]) {
       cell.classList.add('blue-full');
     }
+    bindCellNoteHover(cell, idx);
     grid.appendChild(cell);
   });
   adjustCellFontSize();
   refreshScore();
   updateTeamNames();
+  applyCellNotesDisplay();
 }
 
 // 调整格子字号
@@ -5091,11 +6180,17 @@ function showSetModal() {
 
 // 保存设置表单
 function readSettingsFormSnapshot() {
-  const bigInputVal = document.getElementById('cellTextBigInput').value.trim();
-  const cellTextsArr = bigInputVal ? bigInputVal.split('\n').map(item => item.trim()) : [];
-  const newCellTexts = Array(25).fill('');
-  for (let i = 0; i < 25; i++) {
-    newCellTexts[i] = cellTextsArr[i] ? cellTextsArr[i] : (i + 1).toString();
+  const ta = document.getElementById('cellTextBigInput');
+  const bigInputVal = ta ? ta.value.trim() : '';
+  let newCellTexts = settings.cellTexts.slice();
+  let newCellNotes = Array.isArray(settings.cellNotes) ? settings.cellNotes.slice() : Array(25).fill('');
+  let newCellNotesPreamble = settings.cellNotesPreamble || '';
+  if (settings.cellTextEditMode === 'note') {
+    const bundle = parseCellNotesBundle(bigInputVal);
+    newCellNotes = bundle.notes;
+    newCellNotesPreamble = bundle.preamble;
+  } else {
+    newCellTexts = parseCellTextsFromInput(bigInputVal);
   }
   const bingoParsed = parseInt(document.getElementById('bingoScore').value, 10);
   const restParsed = parseInt(document.getElementById('bingoScoreRest').value, 10);
@@ -5121,7 +6216,13 @@ function readSettingsFormSnapshot() {
     settleScoreRest: Math.max(0, Math.min(999, Number.isNaN(settleRestParsed) ? 0 : settleRestParsed)),
     rowScores,
     cellTexts: newCellTexts,
-    headerText: document.getElementById('headerText').value
+    cellNotes: newCellNotes,
+    cellNotesPreamble: newCellNotesPreamble,
+    cellTextEditMode: settings.cellTextEditMode,
+    cellNoteHoverSec: clampSettingFloat(
+      document.getElementById('cellNoteHoverSec') && document.getElementById('cellNoteHoverSec').value,
+      0.5, 5, SETTINGS_DEFAULTS.cellNoteHoverSec
+    )
   };
 }
 
@@ -5140,6 +6241,9 @@ function migrateImportedSettings(parsed) {
   if (!Array.isArray(settings.cellTexts) || settings.cellTexts.length !== 25) {
     settings.cellTexts = SETTINGS_DEFAULTS.cellTexts.slice();
   }
+  if (!Array.isArray(settings.cellNotes) || settings.cellNotes.length !== 25) {
+    settings.cellNotes = SETTINGS_DEFAULTS.cellNotes.slice();
+  }
   normalizeSettings();
 }
 
@@ -5152,8 +6256,9 @@ function syncSettingsFormFromState() {
   document.getElementById('settleScoreRest').value = getRestSettleScoreVal();
   fillRowScoreForm(settings.rowScores);
   renderCellTextForm();
-  const headerInput = document.getElementById('headerText');
-  if (headerInput) headerInput.value = settings.headerText || '';
+  const hoverSecInput = document.getElementById('cellNoteHoverSec');
+  if (hoverSecInput) hoverSecInput.value = String(getCellNoteHoverSecVal());
+  syncCellNotesToggleUI();
 }
 
 function saveSettings() {
@@ -5169,7 +6274,7 @@ function saveSettings() {
   applyMemoVisibility();
   applySideLayout();
   applyScorePanelLayout();
-  applyHeaderVisibility();
+  applyCellNotesDisplay();
   showToast('所有设置已保存');
 }
 
@@ -5217,7 +6322,7 @@ function toggleSetSection(sectionId) {
 
 // 打开点格菜单
 function showCellPop(ev) {
-  if (isZoomLiveMode()) return;
+  if (isBoardLockedMode()) return;
   closeMarkPop();
   const btnRed = document.getElementById('btnPopRed');
   const btnBlue = document.getElementById('btnPopBlue');
@@ -5304,7 +6409,7 @@ function resetAll() {
 
 // 红方结算
 function add1() {
- if (isZoomLiveMode()) return;
+ if (isBoardLockedMode()) return;
   if(settle1 >= getMaxSettleCountVal()) {showToast(`红方已达最大结算(${getMaxSettleCountVal()})`); return;}
   if(settleHistory.length >= getMaxGlobalSettleCountVal()) {showToast(`全局有效结算已达上限(${getMaxGlobalSettleCountVal()})`); return;}
   const pts = settlePointsForGlobalIndex(settleHistory.length);
@@ -5314,7 +6419,7 @@ function add1() {
 }
 // 蓝方结算
 function add2() {
-if (isZoomLiveMode()) return;
+if (isBoardLockedMode()) return;
   if(settle2 >= getMaxSettleCountVal()) {showToast(`蓝方已达最大结算(${getMaxSettleCountVal()})`); return;}
   if(settleHistory.length >= getMaxGlobalSettleCountVal()) {showToast(`全局有效结算已达上限(${getMaxGlobalSettleCountVal()})`); return;}
   const pts = settlePointsForGlobalIndex(settleHistory.length);
@@ -5326,7 +6431,7 @@ if (isZoomLiveMode()) return;
 function resetSettle() {settle1=0; settle2=0; settleHistory=[]; refreshScore(); saveGameState(); showToast('结算分数已重置');}
 
 function adjustExtra(isRed, delta) {
-  if (isZoomLiveMode()) return;
+  if (isBoardLockedMode()) return;
   if (isRed) {
     extra1 += delta;
     showToast(`${settings.redTeamName}额外分${delta > 0 ? '+' : ''}${delta}`);
@@ -5610,6 +6715,8 @@ async function captureLocalScreen(side, opts = {}) {
       video.classList.remove('hide');
     }
     if (tip) tip.classList.add('hide');
+    applyLiveMute(side);
+    startLiveDelayTicker();
     const track = stream.getVideoTracks()[0];
     if (track) {
       track.onended = function () {
@@ -5774,6 +6881,35 @@ function showToast(message) {
 window.onresize = function() {
   adjustCellFontSize();
 };
+
+function initNumericWheelAdjust() {
+  document.addEventListener('wheel', (e) => {
+    const el = document.activeElement;
+    if (!el || el.tagName !== 'INPUT' || el.type !== 'number') return;
+    if (el.disabled || el.readOnly) return;
+    e.preventDefault();
+    const inputStep = parseFloat(el.step);
+    const stepBase = Number.isFinite(inputStep) && inputStep > 0 ? inputStep : 1;
+    const step = e.shiftKey ? stepBase * 5 : stepBase;
+    const min = el.min !== '' ? parseFloat(el.min) : -Infinity;
+    const max = el.max !== '' ? parseFloat(el.max) : Infinity;
+    const cur = parseFloat(el.value);
+    const base = Number.isFinite(cur) ? cur : 0;
+    const next = Math.max(min, Math.min(max, base + (e.deltaY < 0 ? step : -step)));
+    const decimals = stepBase < 1 ? 1 : 0;
+    el.value = decimals ? String(Math.round(next * 10) / 10) : String(Math.round(next));
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }, { passive: false });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'F11') return;
+  e.preventDefault();
+  if (window.go && window.go.app && window.go.app.App && typeof window.go.app.App.ToggleFullscreen === 'function') {
+    window.go.app.App.ToggleFullscreen();
+  }
+});
 </script>
 <script src="hls.min.js"></script>
 <script src="flv.min.js"></script>

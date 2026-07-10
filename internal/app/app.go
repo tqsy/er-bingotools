@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
-
+	
 	"bingotools/internal/bilibili"
 	"bingotools/internal/douyin"
 	"bingotools/internal/proxy"
@@ -53,6 +53,14 @@ func (a *App) SetClientSize(currentW, currentH, targetW, targetH int) {
 		runtime.WindowSetSize(a.ctx, newW, newH)
 	}
 }
+
+// ToggleFullscreen 切换窗口全屏（供 F11 快捷键调用）。
+//func (a *App) ToggleFullscreen() {
+//	if a.ctx == nil {
+//		return
+//	}
+//	runtime.WindowToggleFullscreen(a.ctx)
+//}
 
 // StartupForTest 供无窗口测试注入 ctx。
 func (a *App) StartupForTest(ctx context.Context) {
